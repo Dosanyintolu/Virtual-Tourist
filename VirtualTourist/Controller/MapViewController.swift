@@ -17,31 +17,58 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     var lat: Double = 0.0
     var lon: Double = 0.0
     let annotation = MKPointAnnotation()
+    var annotations = [MKPointAnnotation]()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
         mapView.delegate = self
-        
-        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(triggeredAction(gestureRecognizer:)))
+        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(mapViewTapped(gestureRecognizer:)))
         gestureRecognizer.delegate = self
         mapView.addGestureRecognizer(gestureRecognizer)
     }
     
-    @objc func triggeredAction(gestureRecognizer: UITapGestureRecognizer) {
-        let location = gestureRecognizer.location(in: mapView)
+   @objc func mapViewTapped(gestureRecognizer: UIGestureRecognizer) {
+        
+        let location =  gestureRecognizer.location(in: mapView)
         let coordinate = mapView.convert(location, toCoordinateFrom: mapView)
-
+        
         annotation.coordinate = coordinate
         mapView.addAnnotation(annotation)
-        lat = annotation.coordinate.latitude
-        lon = annotation.coordinate.longitude
-        print("The location is lat:\(lat) & lon:\(lon)")
+    
     }
     
     @IBAction func clearAnnotations(_ sender: Any) {
         mapView.removeAnnotation(annotation)
+    }
+    
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        let reuseId = "pin"
+        var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
+
+        if pinView == nil {
+            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
+            pinView!.animatesDrop = true
+            pinView!.rightCalloutAccessoryView = UIButton(type: .infoDark)
+            pinView!.pinTintColor = UIColor.red
+        }
+        else {
+            pinView!.annotation = annotation
+        }
+        return pinView
+    }
+    
+     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        performSegue(withIdentifier: "toPhotos", sender: nil)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let vc = segue.destination as? photoAlbumViewController {
+            vc.lat = annotation.coordinate.latitude
+            vc.lon = annotation.coordinate.longitude
+        }
     }
 }
 

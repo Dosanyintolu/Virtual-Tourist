@@ -51,5 +51,25 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         return cell
        }
     
+}
+
+extension photoAlbumViewController {
+    
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        let annotation = MKPointAnnotation()
+        let reuseId = "pin"
+        var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
+
+        if pinView == nil {
+            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
+            pinView!.animatesDrop = true
+            pinView!.rightCalloutAccessoryView = UIButton(type: .infoDark)
+            pinView!.pinTintColor = UIColor.red
+        }
+        else {
+            pinView!.annotation = annotation
+        }
+        return pinView
+    }
     
 }
