@@ -40,6 +40,7 @@ class DataController {
         }
         
         if viewContext.hasChanges {
+            print("Save made")
             try? viewContext.save()
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + interval) {

@@ -8,10 +8,13 @@
 
 import UIKit
 import MapKit
+import CoreData
 
-class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource {
+class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource, NSFetchedResultsControllerDelegate {
    
     var location: Location!
+    var dataController: DataController!
+    var fetchResultController: NSFetchedResultsController<Location>!
     
     
     @IBOutlet weak var mapView: MKMapView!
@@ -39,6 +42,20 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         mapView.setRegion(region, animated: true)
         mapView.addAnnotation(annotation)
     }
+    
+    func setUpFetchedResultsViewController() {
+           let fetchRequest: NSFetchRequest<Location> = Location.fetchRequest()
+           let sortDescriptor = NSSortDescriptor(key: "latitude", ascending: false)
+           fetchRequest.sortDescriptors = [sortDescriptor]
+           fetchResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: nil)
+           
+           fetchResultController.delegate = self
+           do {
+               try fetchResultController.performFetch()
+           } catch {
+               print(error.localizedDescription)
+           }
+       }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
            return 1

@@ -15,7 +15,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var clearButton: UIButton!
     
-    var location: Location!
     var dataController: DataController!
     var fetchResultController: NSFetchedResultsController<Location>!
     
@@ -29,7 +28,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
         gestureRecognizer.delegate = self
         mapView.addGestureRecognizer(gestureRecognizer)
         setUpFetchedResultsViewController()
-        getLocationFromCoreData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -45,7 +43,10 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     
     func setUpFetchedResultsViewController() {
         let fetchRequest: NSFetchRequest<Location> = Location.fetchRequest()
+        let sortDescriptor = NSSortDescriptor(key: "latitude", ascending: false)
+        fetchRequest.sortDescriptors = [sortDescriptor]
         fetchResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: nil)
+        
         fetchResultController.delegate = self
         do {
             try fetchResultController.performFetch()
@@ -75,11 +76,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     }
     
     func getLocationFromCoreData() {
-        let annotation = MKPointAnnotation()
-        let coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
         
-        annotation.coordinate = coordinate
-        mapView.addAnnotation(annotation)
+        
     }
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
@@ -104,7 +102,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let vc = segue.destination as? photoAlbumViewController {
-            vc.location = location
+//            vc.location = location
+            vc.dataController = dataController
         }
     }
 }
