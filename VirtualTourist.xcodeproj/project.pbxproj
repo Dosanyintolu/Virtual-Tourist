@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7611FC08247DF79D00713A67 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7611FC07247DF79D00713A67 /* DataController.swift */; };
 		761B91482479B3FF00B03FF3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761B91472479B3FF00B03FF3 /* AppDelegate.swift */; };
 		761B914A2479B3FF00B03FF3 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761B91492479B3FF00B03FF3 /* SceneDelegate.swift */; };
 		761B914C2479B3FF00B03FF3 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761B914B2479B3FF00B03FF3 /* MapViewController.swift */; };
@@ -23,6 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7611FC07247DF79D00713A67 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 		761B91442479B3FF00B03FF3 /* VirtualTourist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VirtualTourist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		761B91472479B3FF00B03FF3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		761B91492479B3FF00B03FF3 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -132,6 +134,7 @@
 			isa = PBXGroup;
 			children = (
 				761B91502479B3FF00B03FF3 /* VirtualTourist.xcdatamodeld */,
+				7611FC07247DF79D00713A67 /* DataController.swift */,
 			);
 			path = "Core Data";
 			sourceTree = "<group>";
@@ -220,6 +223,7 @@
 				761B91522479B3FF00B03FF3 /* VirtualTourist.xcdatamodeld in Sources */,
 				76AAEF63247A2EBE0080C94F /* collectionCell.swift in Sources */,
 				761B914C2479B3FF00B03FF3 /* MapViewController.swift in Sources */,
+				7611FC08247DF79D00713A67 /* DataController.swift in Sources */,
 				761B91482479B3FF00B03FF3 /* AppDelegate.swift in Sources */,
 				761B914A2479B3FF00B03FF3 /* SceneDelegate.swift in Sources */,
 				761B91632479B64E00B03FF3 /* flickrClient.swift in Sources */,

@@ -8,16 +8,16 @@
 
 import UIKit
 import MapKit
+import CoreData
 
-class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDelegate {
+class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDelegate, NSFetchedResultsControllerDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var clearButton: UIButton!
     
-    var lat: Double = 0.0
-    var lon: Double = 0.0
-    let annotation = MKPointAnnotation()
-    var annotations = [MKPointAnnotation]()
+    var location: Location!
+    var dataController: DataController!
+    var fetchResultController: NSFetchedResultsController<Location>!
     
     
     override func viewDidLoad() {
@@ -25,23 +25,61 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
         // Do any additional setup after loading the view.
         
         mapView.delegate = self
-        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(mapViewTapped(gestureRecognizer:)))
+        let gestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(mapViewTapped(gestureRecognizer:)))
         gestureRecognizer.delegate = self
         mapView.addGestureRecognizer(gestureRecognizer)
+        setUpFetchedResultsViewController()
+        getLocationFromCoreData()
     }
     
-   @objc func mapViewTapped(gestureRecognizer: UIGestureRecognizer) {
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setUpFetchedResultsViewController()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        fetchResultController = nil
+    }
+    
+    
+    func setUpFetchedResultsViewController() {
+        let fetchRequest: NSFetchRequest<Location> = Location.fetchRequest()
+        fetchResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: nil)
+        fetchResultController.delegate = self
+        do {
+            try fetchResultController.performFetch()
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+   @objc func mapViewTapped(gestureRecognizer: UILongPressGestureRecognizer) {
+    if gestureRecognizer.state == .began {
         
+        let locationStore = Location(context: dataController.viewContext)
+        let annotation = MKPointAnnotation()
         let location =  gestureRecognizer.location(in: mapView)
         let coordinate = mapView.convert(location, toCoordinateFrom: mapView)
         
         annotation.coordinate = coordinate
+        locationStore.longitude = annotation.coordinate.longitude
+        locationStore.latitude = annotation.coordinate.latitude
+        try? dataController.viewContext.save()
         mapView.addAnnotation(annotation)
-    
+        }
     }
     
     @IBAction func clearAnnotations(_ sender: Any) {
-        mapView.removeAnnotation(annotation)
+//        mapView.removeAnnotation()
+    }
+    
+    func getLocationFromCoreData() {
+        let annotation = MKPointAnnotation()
+        let coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
+        
+        annotation.coordinate = coordinate
+        mapView.addAnnotation(annotation)
     }
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
@@ -66,8 +104,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let vc = segue.destination as? photoAlbumViewController {
-            vc.lat = annotation.coordinate.latitude
-            vc.lon = annotation.coordinate.longitude
+            vc.location = location
         }
     }
 }
