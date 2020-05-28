@@ -35,7 +35,7 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         super.viewWillAppear(animated)
         
         let annotation = MKPointAnnotation()
-        let coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
+        let coordinate = CLLocationCoordinate2D(latitude: location.latitude , longitude: location.longitude)
         let span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
         let region = MKCoordinateRegion(center: coordinate, span: span)
         annotation.coordinate = coordinate

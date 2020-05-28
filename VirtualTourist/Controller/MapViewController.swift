@@ -28,6 +28,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
         gestureRecognizer.delegate = self
         mapView.addGestureRecognizer(gestureRecognizer)
         setUpFetchedResultsViewController()
+        getLocationFromCoreData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -43,7 +44,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     
     func setUpFetchedResultsViewController() {
         let fetchRequest: NSFetchRequest<Location> = Location.fetchRequest()
-        let sortDescriptor = NSSortDescriptor(key: "latitude", ascending: false)
+        let sortDescriptor = NSSortDescriptor(key: "creationDate", ascending: false)
         fetchRequest.sortDescriptors = [sortDescriptor]
         fetchResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: nil)
         
@@ -66,17 +67,28 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
         annotation.coordinate = coordinate
         locationStore.longitude = annotation.coordinate.longitude
         locationStore.latitude = annotation.coordinate.latitude
+        locationStore.creationDate = Date()
         try? dataController.viewContext.save()
         mapView.addAnnotation(annotation)
         }
     }
     
     @IBAction func clearAnnotations(_ sender: Any) {
-//        mapView.removeAnnotation()
+        
     }
     
     func getLocationFromCoreData() {
+        let annotation = MKPointAnnotation()
         
+        for location in fetchResultController.fetchedObjects! {
+            
+            print(location)
+            annotation.coordinate.latitude = location.latitude
+            annotation.coordinate.longitude = location.longitude
+            
+            mapView.addAnnotation(annotation)
+            
+        }
         
     }
     
@@ -102,7 +114,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let vc = segue.destination as? photoAlbumViewController {
-//            vc.location = location
+            
             vc.dataController = dataController
         }
     }
