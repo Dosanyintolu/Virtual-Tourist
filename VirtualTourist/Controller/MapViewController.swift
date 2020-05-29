@@ -15,9 +15,11 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var clearButton: UIButton!
     
+    var location: Location!
     var dataController: DataController!
     var fetchResultController: NSFetchedResultsController<Location>!
-    
+    var annotations = [MKPointAnnotation]()
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,7 +46,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     
     func setUpFetchedResultsViewController() {
         let fetchRequest: NSFetchRequest<Location> = Location.fetchRequest()
-        let sortDescriptor = NSSortDescriptor(key: "creationDate", ascending: false)
+        let sortDescriptor = NSSortDescriptor(key: "latitude", ascending: false)
         fetchRequest.sortDescriptors = [sortDescriptor]
         fetchResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: nil)
         
@@ -64,10 +66,10 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
         let location =  gestureRecognizer.location(in: mapView)
         let coordinate = mapView.convert(location, toCoordinateFrom: mapView)
         
+        
         annotation.coordinate = coordinate
         locationStore.longitude = annotation.coordinate.longitude
         locationStore.latitude = annotation.coordinate.latitude
-        locationStore.creationDate = Date()
         try? dataController.viewContext.save()
         mapView.addAnnotation(annotation)
         }
@@ -75,17 +77,27 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     
     @IBAction func clearAnnotations(_ sender: Any) {
         
+        let alert = UIAlertController(title: "Delete Pins", message: "Confirm deleting all Pins", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Delete all", style: .destructive, handler: { (_) in
+            
+            let annotation = MKPointAnnotation()
+            annotation.coordinate.latitude = self.location.latitude
+            annotation.coordinate.longitude = self.location.longitude
+            self.mapView.removeAnnotation(annotation)
+            try? self.dataController.viewContext.save()
+            print(self.location!)
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        present(alert, animated: true, completion: nil)
+        
     }
     
     func getLocationFromCoreData() {
-        let annotation = MKPointAnnotation()
-        
         for location in fetchResultController.fetchedObjects! {
-            
-            print(location)
+            let annotation = MKPointAnnotation()
+            print("the core data stack lat is : \(location.latitude), \(location.longitude)")
             annotation.coordinate.latitude = location.latitude
             annotation.coordinate.longitude = location.longitude
-            
             mapView.addAnnotation(annotation)
             
         }
@@ -114,8 +126,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let vc = segue.destination as? photoAlbumViewController {
-            
             vc.dataController = dataController
+            vc.location = location
         }
     }
 }

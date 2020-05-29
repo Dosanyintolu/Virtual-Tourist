@@ -33,7 +33,7 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+       
         let annotation = MKPointAnnotation()
         let coordinate = CLLocationCoordinate2D(latitude: location.latitude , longitude: location.longitude)
         let span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
@@ -42,6 +42,9 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         mapView.setRegion(region, animated: true)
         mapView.addAnnotation(annotation)
     }
+    
+    
+    
     
     func setUpFetchedResultsViewController() {
            let fetchRequest: NSFetchRequest<Location> = Location.fetchRequest()
@@ -56,6 +59,10 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
                print(error.localizedDescription)
            }
        }
+    
+    func fetchLocation() {
+        
+    }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
            return 1
