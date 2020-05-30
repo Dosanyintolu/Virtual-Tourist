@@ -95,7 +95,11 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
                 annotation.coordinate.latitude = location.latitude
                 annotation.coordinate.longitude = location.longitude
             self.dataController.viewContext.delete(location)
-            try? self.dataController.viewContext.save()
+                do {
+            try self.dataController.viewContext.save()
+                } catch {
+                    print(error)
+                }
                 self.mapView.removeAnnotation(annotation)
             print(location)
         }
