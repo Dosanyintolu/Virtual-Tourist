@@ -33,18 +33,18 @@ class DataController {
         }
     }
     
-    func autoSaveViewContext(time interval: TimeInterval = 15) {
+    func autoSaveViewContext(interval: TimeInterval = 15) {
+        print("Save made")
         guard interval > 0 else {
             print("Unable to autosave")
             return
         }
         
         if viewContext.hasChanges {
-            print("Save made")
             try? viewContext.save()
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + interval) {
-            self.autoSaveViewContext(time: interval)
+            self.autoSaveViewContext(interval: interval)
         }
     }
 }

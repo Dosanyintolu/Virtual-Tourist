@@ -30,8 +30,19 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <navigationItem key="navigationItem" title="Virtual Tourist" id="lge-zU-TDW">
+                        <barButtonItem key="leftBarButtonItem" title="Item" id="Gfq-MC-A6S">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="IYt-hc-Ukx">
+                                <rect key="frame" x="20" y="4" width="92" height="36"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" weight="thin" pointSize="20"/>
+                                <state key="normal" title="Print"/>
+                                <connections>
+                                    <action selector="printCoreDataLocation:" destination="BYZ-38-t0r" eventType="touchUpInside" id="lxJ-1W-bLc"/>
+                                </connections>
+                            </button>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" id="po4-tI-hn4">
-                            <button key="customView" opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="k97-9H-2HD">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="k97-9H-2HD">
                                 <rect key="frame" x="341" y="2" width="53" height="40"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" weight="thin" pointSize="20"/>
@@ -47,6 +58,7 @@
                     <connections>
                         <outlet property="clearButton" destination="k97-9H-2HD" id="Ehr-yr-HU0"/>
                         <outlet property="mapView" destination="ies-fF-bNj" id="lqM-Qa-Nr3"/>
+                        <outlet property="printButton" destination="IYt-hc-Ukx" id="IcM-PZ-Kfa"/>
                         <segue destination="nU5-Uc-sT4" kind="show" identifier="toPhotos" id="ebB-ay-DbR"/>
                     </connections>
                 </viewController>
@@ -113,6 +125,10 @@
                                                 </connections>
                                             </collectionViewCell>
                                         </cells>
+                                        <connections>
+                                            <outlet property="dataSource" destination="nU5-Uc-sT4" id="2L0-LK-DGK"/>
+                                            <outlet property="delegate" destination="nU5-Uc-sT4" id="rT7-5u-gdr"/>
+                                        </connections>
                                     </collectionView>
                                 </subviews>
                             </stackView>
