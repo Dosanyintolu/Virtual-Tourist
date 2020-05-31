@@ -12,7 +12,8 @@ import CoreData
 
 class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource, NSFetchedResultsControllerDelegate {
    
-    var location: Location!
+    var latitude: CLLocationDegrees = 0.0
+    var longitude: CLLocationDegrees = 0.0
     var dataController: DataController!
     var fetchResultController: NSFetchedResultsController<Location>!
     
@@ -27,20 +28,19 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         mapView.delegate = self
         photoCollection.delegate = self
         photoCollection.dataSource = self
-        
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
        
         let annotation = MKPointAnnotation()
-        let coordinate = CLLocationCoordinate2D(latitude: location.latitude , longitude: location.longitude)
+        let coordinate = CLLocationCoordinate2D(latitude: latitude , longitude: longitude)
         let span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
         let region = MKCoordinateRegion(center: coordinate, span: span)
         annotation.coordinate = coordinate
         mapView.setRegion(region, animated: true)
         mapView.addAnnotation(annotation)
+        setUpFetchedResultsViewController()
     }
     
     
@@ -59,6 +59,16 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
                print(error.localizedDescription)
            }
        }
+    
+    func getFlickrImages(completion: @escaping (Error?) -> Void) {
+//        let image = Location(context: dataController.viewContext)
+        flickrClient.getImageFromFlickr(lat: latitude, lon: longitude) { (images, error) in
+            if error == nil {
+                
+            }
+        }
+        
+    }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
            return 1

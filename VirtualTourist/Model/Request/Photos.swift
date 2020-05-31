@@ -15,6 +15,6 @@ struct Photos: Codable {
     var pages: String
     var perPage: Int
     var total: String
-    var photo: [Photo]
+    var photo: Photo
     
 }

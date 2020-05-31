@@ -34,12 +34,12 @@ class flickrClient {
         }
     }
     
-    class func getImageFromFlickr(lat: Double, lon: Double, completion: @escaping ([Photo], Error?) -> Void ) {
+    class func getImageFromFlickr(lat: Double, lon: Double, completion: @escaping (Photo?, Error?) -> Void ) {
         taskGETRequest(url: Endpoint.flickrSearchImageURL(lat,lon).url, response: Photos.self) { (response, error) in
             if let response = response {
                 completion(response.photo, nil)
             } else {
-                completion([], error)
+                completion(nil, error)
             }
         }
         

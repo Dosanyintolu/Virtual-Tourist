@@ -14,8 +14,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
 
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var clearButton: UIButton!
-    @IBOutlet weak var printButton: UIButton!
-    
     
     var location: Location!
     var dataController: DataController!
@@ -79,30 +77,17 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
         }
     }
 }
-    @IBAction func printCoreDataLocation(_ sender: Any) {
-        for location in fetchResultController.fetchedObjects! {
-            print(location.latitude, location.longitude)
-        }
-    }
-    
     @IBAction func clearAnnotations(_ sender: Any) {
         
         let alert = UIAlertController(title: "Delete Pins", message: "Confirm deleting all Pins", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Delete all", style: .destructive, handler: { (_) in
+            
+                let annotations = self.mapView.annotations
+                self.mapView.removeAnnotations(annotations)
             for location in self.fetchResultController.fetchedObjects! {
-                
-                let annotation = MKPointAnnotation()
-                annotation.coordinate.latitude = location.latitude
-                annotation.coordinate.longitude = location.longitude
-            self.dataController.viewContext.delete(location)
-                do {
-            try self.dataController.viewContext.save()
-                } catch {
-                    print(error)
-                }
-                self.mapView.removeAnnotation(annotation)
-            print(location)
-        }
+                self.dataController.viewContext.delete(location)
+                try? self.dataController.viewContext.save()
+            }
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         present(alert, animated: true, completion: nil)
@@ -141,7 +126,9 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let vc = segue.destination as? photoAlbumViewController {
-            vc.dataController = dataController
+                vc.latitude = location.latitude
+                vc.longitude = location.longitude
+                vc.dataController = dataController
         }
     }
 }
