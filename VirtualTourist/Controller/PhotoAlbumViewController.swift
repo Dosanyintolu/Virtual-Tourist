@@ -12,14 +12,14 @@ import CoreData
 
 class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource, NSFetchedResultsControllerDelegate {
    
-    var latitude: CLLocationDegrees = 0.0
-    var longitude: CLLocationDegrees = 0.0
+    var location: Location!
     var dataController: DataController!
     var fetchResultController: NSFetchedResultsController<Location>!
     
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var photoCollection: UICollectionView!
+    @IBOutlet weak var imageLabel: UILabel!
     
     
     override func viewDidLoad() {
@@ -28,22 +28,47 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         mapView.delegate = self
         photoCollection.delegate = self
         photoCollection.dataSource = self
+        imageLabel.isHidden = true
+        downloadImagesFromFlickr()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-       
         let annotation = MKPointAnnotation()
-        let coordinate = CLLocationCoordinate2D(latitude: latitude , longitude: longitude)
+        let coordinate = CLLocationCoordinate2D(latitude: 32.8297529087073 , longitude: -98.30174486714975)
         let span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
         let region = MKCoordinateRegion(center: coordinate, span: span)
         annotation.coordinate = coordinate
         mapView.setRegion(region, animated: true)
         mapView.addAnnotation(annotation)
         setUpFetchedResultsViewController()
+        
     }
     
-    
+    func downloadImagesFromFlickr() {
+        flickrClient.getImageFromFlickr(lat: 32.8297529087073, lon: -98.30174486714975) { (photo, error) in
+            if error == nil {
+                let flickr = FlickrImage(context: self.dataController.viewContext)
+                flickr.id = photo?.id
+                flickr.farm = photo?.farm
+                flickr.isFamily = photo?.isFamily
+                flickr.isPublic = photo?.isPublic
+                flickr.server = photo?.server
+                flickr.owner = photo?.owner
+                flickr.secret = photo?.secret
+                flickr.title = photo?.title
+                flickr.isFriend = photo?.isFriend
+                print(flickr)
+                do {
+                    try self.dataController.viewContext.save()
+                } catch {
+                    print(error.localizedDescription)
+                }
+            } else {
+                print(error?.localizedDescription ?? "Error in the fetch image block")
+            }
+        }
+    }
     
     
     func setUpFetchedResultsViewController() {
@@ -60,23 +85,24 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
            }
        }
     
-    func getFlickrImages(completion: @escaping (Error?) -> Void) {
-//        let image = Location(context: dataController.viewContext)
-        flickrClient.getImageFromFlickr(lat: latitude, lon: longitude) { (images, error) in
-            if error == nil {
-                
-            }
-        }
-        
-    }
-    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-           return 1
+        return fetchResultController.sections?[section].numberOfObjects ?? 0
        }
        
        func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath) as! collectionCell
         
+        guard let imagee = UIImage(data: location.flickrImages!) else { return cell }
+        cell.imageView.image = imagee
+        
+        do {
+        try dataController.viewContext.save()
+        } catch {
+            print(error.localizedDescription)
+        }
+        if collectionView.visibleCells.count < 1 {
+            imageLabel.isHidden = false
+        }
         return cell
        }
     

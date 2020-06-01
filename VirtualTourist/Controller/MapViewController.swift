@@ -15,10 +15,9 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var clearButton: UIButton!
     
-    var location: Location!
+    var location: [Location]!
     var dataController: DataController!
     var fetchResultController: NSFetchedResultsController<Location>!
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,6 +34,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setUpFetchedResultsViewController()
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -59,7 +59,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     
    @objc func mapViewTapped(gestureRecognizer: UILongPressGestureRecognizer) {
     if gestureRecognizer.state == .began {
-        
         let locationStore = Location(context: dataController.viewContext)
         let annotation = MKPointAnnotation()
         let location =  gestureRecognizer.location(in: mapView)
@@ -100,6 +99,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
             annotation.coordinate.latitude = location.latitude
             annotation.coordinate.longitude = location.longitude
             mapView.addAnnotation(annotation)
+            print(location.latitude, location.longitude)
         }
         
     }
@@ -118,17 +118,18 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
             pinView!.annotation = annotation
         }
         return pinView
+        
     }
     
      func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         performSegue(withIdentifier: "toPhotos", sender: nil)
+        let savedPins = fetchResultController.fetchedObjects! as [Location]
+        location = savedPins.filter({$0.latitude == view.annotation?.coordinate.latitude && $0.longitude == view.annotation?.coordinate.longitude})
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let vc = segue.destination as? photoAlbumViewController {
-                vc.latitude = location.latitude
-                vc.longitude = location.longitude
-                vc.dataController = dataController
+            vc.dataController = dataController
         }
     }
 }

@@ -84,6 +84,13 @@
                                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         </collectionViewFlowLayout>
+                                        <label key="backgroundView" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Image Found" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ewn-E1-M8X">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="625"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="21"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
                                         <cells>
                                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="collectionCell" id="wdU-p4-jDN" customClass="collectionCell" customModule="VirtualTourist" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="0.0" width="136" height="111"/>
@@ -132,6 +139,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="cUO-FE-pP3"/>
                     <connections>
+                        <outlet property="imageLabel" destination="ewn-E1-M8X" id="F7a-C0-kT9"/>
                         <outlet property="mapView" destination="494-N2-Zq1" id="731-SB-IWT"/>
                         <outlet property="photoCollection" destination="bzP-2R-FJi" id="iV3-xy-sKf"/>
                     </connections>

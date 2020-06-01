@@ -15,11 +15,11 @@ struct Photo: Codable {
     var owner: String
     var secret: String
     var server: String
-    var farm: Int
+    var farm: String
     var title: String
-    var isPublic: Int
-    var isFriend: Int
-    var isFamily: Int
+    var isPublic: String
+    var isFriend: String
+    var isFamily: String
     
     enum Codingkeys: String, CodingKey {
         
