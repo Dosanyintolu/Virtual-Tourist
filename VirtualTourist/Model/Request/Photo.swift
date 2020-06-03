@@ -15,11 +15,8 @@ struct Photo: Codable {
     var owner: String
     var secret: String
     var server: String
-    var farm: String
+    var farm: Int
     var title: String
-    var isPublic: String
-    var isFriend: String
-    var isFamily: String
     
     enum Codingkeys: String, CodingKey {
         
@@ -29,9 +26,6 @@ struct Photo: Codable {
         case server
         case farm
         case title
-        case isPublic = "ispublic"
-        case isFriend = "isfriend"
-        case isFamily = "isfamily"
     }
     
 }

@@ -14,7 +14,8 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
    
     var location: Location!
     var dataController: DataController!
-    var fetchResultController: NSFetchedResultsController<Location>!
+    var fetchResultController: NSFetchedResultsController<FlickrImage>!
+    var flickr: [FlickrImage]!
     
     
     @IBOutlet weak var mapView: MKMapView!
@@ -29,7 +30,6 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         photoCollection.delegate = self
         photoCollection.dataSource = self
         imageLabel.isHidden = true
-        downloadImagesFromFlickr()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -42,40 +42,15 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         mapView.setRegion(region, animated: true)
         mapView.addAnnotation(annotation)
         setUpFetchedResultsViewController()
-        
+        downloadImageDetailsFromFlickr()
     }
-    
-    func downloadImagesFromFlickr() {
-        flickrClient.getImageFromFlickr(lat: 32.8297529087073, lon: -98.30174486714975) { (photo, error) in
-            if error == nil {
-                let flickr = FlickrImage(context: self.dataController.viewContext)
-                flickr.id = photo?.id
-                flickr.farm = photo?.farm
-                flickr.isFamily = photo?.isFamily
-                flickr.isPublic = photo?.isPublic
-                flickr.server = photo?.server
-                flickr.owner = photo?.owner
-                flickr.secret = photo?.secret
-                flickr.title = photo?.title
-                flickr.isFriend = photo?.isFriend
-                print(flickr)
-                do {
-                    try self.dataController.viewContext.save()
-                } catch {
-                    print(error.localizedDescription)
-                }
-            } else {
-                print(error?.localizedDescription ?? "Error in the fetch image block")
-            }
-        }
-    }
-    
     
     func setUpFetchedResultsViewController() {
-           let fetchRequest: NSFetchRequest<Location> = Location.fetchRequest()
-           let sortDescriptor = NSSortDescriptor(key: "latitude", ascending: false)
+           let fetchRequest: NSFetchRequest<FlickrImage> = FlickrImage.fetchRequest()
+           let sortDescriptor = NSSortDescriptor(key: "id", ascending: false)
            fetchRequest.sortDescriptors = [sortDescriptor]
-           fetchResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: nil)
+        fetchResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: nil)
+        
            
            fetchResultController.delegate = self
            do {
@@ -91,21 +66,9 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
        
        func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath) as! collectionCell
+        let flickr = fetchResultController.object(at: indexPath)
         
-        guard let imagee = UIImage(data: location.flickrImages!) else { return cell }
-        cell.imageView.image = imagee
-        
-        do {
-        try dataController.viewContext.save()
-        } catch {
-            print(error.localizedDescription)
-        }
-        if collectionView.visibleCells.count < 1 {
-            imageLabel.isHidden = false
-        }
         return cell
-       }
-    
 }
 
 extension photoAlbumViewController {

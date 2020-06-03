@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+import UIKit
 
 
 class flickrClient {
@@ -18,14 +18,18 @@ class flickrClient {
     enum Endpoint{
        static let flickrbaseURL = "https://www.flickr.com/services/rest/?method=flickr.photos.search&"
        static let flickrApiKey = "api_key=\(flickrClient.apiKey)"
-       static let flickrPoint = "&media=Photo&per_page=50&format=rest"
+       static let flickrPoint = "&media=Photo&per_page=3&format=json"
+        
         
       case flickrSearchImageURL(Double, Double)
+        case photoSourceURL(farmID:String, serverId:String, iD:String, secret:String)
         
         var stringValue: String{
             switch self {
             case .flickrSearchImageURL(let lat,let lon):
                 return Endpoint.flickrbaseURL + Endpoint.flickrApiKey + "&lat=\(lat)&lon=\(lon)" + Endpoint.flickrPoint
+            case .photoSourceURL(let farmId, let serverId, let iD, let secret):
+                return "https://farm\(farmId).staticflickr.com/\(serverId)/\(iD)_\(secret).jpg"
             }
         }
         
@@ -34,14 +38,27 @@ class flickrClient {
         }
     }
     
-    class func getImageFromFlickr(lat: Double, lon: Double, completion: @escaping (Photo?, Error?) -> Void ) {
-        taskGETRequest(url: Endpoint.flickrSearchImageURL(lat,lon).url, response: Photos.self) { (response, error) in
+    class func getImageDetailsFromFlickr(lat: Double, lon: Double, completion: @escaping ([Photo], Error?) -> Void ) {
+        taskGETRequest(url: Endpoint.flickrSearchImageURL(lat,lon).url, response: photoClass.self) { (response, error) in
             if let response = response {
-                completion(response.photo, nil)
+                completion(response.photos.photo, nil)
+                print(response)
             } else {
-                completion(nil, error)
+                completion([], error)
             }
         }
+    }
+    
+    class func getImage(farmID: String, serverId: String, iD: String, secret: String, completion: @escaping(UIImage?, Error?) -> Void) {
+        let task = URLSession.shared.dataTask(with: Endpoint.photoSourceURL(farmID: farmID, serverId: serverId, iD: iD, secret: secret).url) { (data, _, error) in
+            guard let data = data else {
+                completion(nil, error)
+                return
+            }
+            let downloadedImage = UIImage(data: data)
+            completion(downloadedImage, nil)
+        }
+        task.resume()
         
     }
     
@@ -56,9 +73,14 @@ class flickrClient {
             let decoder = JSONDecoder()
             
             do {
-                let object = try decoder.decode(Response.self, from: data)
+                let range = (14..<data.count)
+                var newData = data.subdata(in: range)
+                newData.popLast()
+                print(String(data: newData, encoding: .utf8)!)
+                let object = try decoder.decode(Response.self, from: newData)
                 DispatchQueue.main.async {
                     completion(object, nil)
+                    print(object)
                 }
             } catch {
                 do {
