@@ -137,8 +137,21 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="RSl-VP-ag0"/>
                     </view>
-                    <navigationItem key="navigationItem" id="cUO-FE-pP3"/>
+                    <navigationItem key="navigationItem" id="cUO-FE-pP3">
+                        <barButtonItem key="rightBarButtonItem" id="gvU-MO-IIP">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="9J8-XN-Kx5">
+                                <rect key="frame" x="302" y="7" width="92" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Clear"/>
+                                <connections>
+                                    <action selector="deleteButton:" destination="nU5-Uc-sT4" eventType="touchUpInside" id="l5q-uo-h5j"/>
+                                </connections>
+                            </button>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
+                        <outlet property="clearbutton" destination="9J8-XN-Kx5" id="X2V-zC-QyD"/>
+                        <outlet property="flowLayout" destination="2DL-YA-DnG" id="RYh-pi-KLg"/>
                         <outlet property="imageLabel" destination="ewn-E1-M8X" id="F7a-C0-kT9"/>
                         <outlet property="mapView" destination="494-N2-Zq1" id="731-SB-IWT"/>
                         <outlet property="photoCollection" destination="bzP-2R-FJi" id="iV3-xy-sKf"/>

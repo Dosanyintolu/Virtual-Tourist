@@ -99,7 +99,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
             annotation.coordinate.latitude = location.latitude
             annotation.coordinate.longitude = location.longitude
             mapView.addAnnotation(annotation)
-            print(location.latitude, location.longitude)
         }
         
     }
@@ -123,8 +122,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     
      func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         performSegue(withIdentifier: "toPhotos", sender: nil)
-        let savedPins = fetchResultController.fetchedObjects! as [Location]
-        location = savedPins.filter({$0.latitude == view.annotation?.coordinate.latitude && $0.longitude == view.annotation?.coordinate.longitude})
+        
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

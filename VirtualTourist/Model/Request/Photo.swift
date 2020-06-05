@@ -17,6 +17,9 @@ struct Photo: Codable {
     var server: String
     var farm: Int
     var title: String
+    var url: String
+    var height: Int
+    var width: Int
     
     enum Codingkeys: String, CodingKey {
         
@@ -26,6 +29,9 @@ struct Photo: Codable {
         case server
         case farm
         case title
+        case url = "url_m"
+        case height = "height_m"
+        case width = "width_m"
     }
     
 }

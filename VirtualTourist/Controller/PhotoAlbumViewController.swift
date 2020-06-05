@@ -15,12 +15,15 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     var location: Location!
     var dataController: DataController!
     var fetchResultController: NSFetchedResultsController<FlickrImage>!
-    var flickr: [FlickrImage]!
+   
+   
     
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var photoCollection: UICollectionView!
     @IBOutlet weak var imageLabel: UILabel!
+    @IBOutlet weak var clearbutton: UIButton!
+    @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
     
     
     override func viewDidLoad() {
@@ -30,6 +33,13 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         photoCollection.delegate = self
         photoCollection.dataSource = self
         imageLabel.isHidden = true
+        downloadImageDetailsFromFlickr()
+        let space: CGFloat = 1.0
+        let dimension = (view.frame.size.width - (2 * space)) / 1.5
+        
+        flowLayout.minimumInteritemSpacing = space
+        flowLayout.minimumLineSpacing = space
+        flowLayout.itemSize = CGSize(width: dimension, height: dimension)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -60,6 +70,20 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
            }
        }
     
+    
+    @IBAction func deleteButton(_ sender: Any) {
+        
+        for image in fetchResultController.fetchedObjects! {
+            dataController.viewContext.delete(image)
+            try? dataController.viewContext.save()
+        }
+        photoCollection.reloadData()
+    }
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return fetchResultController.sections?.count ?? 1
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return fetchResultController.sections?[section].numberOfObjects ?? 0
        }
@@ -67,27 +91,12 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
        func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath) as! collectionCell
         let flickr = fetchResultController.object(at: indexPath)
+        cell.imageView.image = UIImage(data: flickr.url!)
         
+        
+        if cell.imageView.image == nil {
+            imageLabel.isHidden = false
+        }
         return cell
-}
-
-extension photoAlbumViewController {
-    
-    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        let annotation = MKPointAnnotation()
-        let reuseId = "pin"
-        var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
-
-        if pinView == nil {
-            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
-            pinView!.animatesDrop = true
-            pinView!.rightCalloutAccessoryView = UIButton(type: .infoDark)
-            pinView!.pinTintColor = UIColor.red
-        }
-        else {
-            pinView!.annotation = annotation
-        }
-        return pinView
     }
-    
 }
