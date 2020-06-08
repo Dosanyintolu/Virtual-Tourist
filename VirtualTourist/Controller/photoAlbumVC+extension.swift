@@ -21,8 +21,9 @@ extension photoAlbumViewController {
                     flickr.owner = i.owner
                     flickr.server = i.server
                     flickr.secret = i.secret
-                    flickr.url = Data(base64Encoded: i.url)
+                    flickr.url = Data(i.url_m.utf8)
                 }
+                print(String(data: flickr.url!, encoding: .utf8)!)
                 do {
                     try self.dataController.viewContext.save()
                 } catch {

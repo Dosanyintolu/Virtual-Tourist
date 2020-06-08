@@ -85,18 +85,22 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        let flickr = fetchResultController.fetchedObjects!
+        
+        if flickr.count == 0 {
+            imageLabel.isHidden = false
+        }
+        
         return fetchResultController.sections?[section].numberOfObjects ?? 0
        }
        
        func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath) as! collectionCell
         let flickr = fetchResultController.object(at: indexPath)
+        
         cell.imageView.image = UIImage(data: flickr.url!)
         
         
-        if cell.imageView.image == nil {
-            imageLabel.isHidden = false
-        }
         return cell
     }
 }
