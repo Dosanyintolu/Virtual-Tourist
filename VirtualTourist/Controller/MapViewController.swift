@@ -15,7 +15,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var clearButton: UIButton!
     
-    var location: [Location]!
+    var location: [Location] = []
     var dataController: DataController!
     var fetchResultController: NSFetchedResultsController<Location>!
     
@@ -69,6 +69,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
         locationStore.longitude = annotation.coordinate.longitude
         locationStore.latitude = annotation.coordinate.latitude
         mapView.addAnnotation(annotation)
+        self.location.append(locationStore)
         do {
             try dataController.viewContext.save()
         }catch {
@@ -86,6 +87,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
             for location in self.fetchResultController.fetchedObjects! {
                 self.dataController.viewContext.delete(location)
                 try? self.dataController.viewContext.save()
+                self.location.removeAll()
             }
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
@@ -99,6 +101,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
             annotation.coordinate.latitude = location.latitude
             annotation.coordinate.longitude = location.longitude
             mapView.addAnnotation(annotation)
+            print(location)
         }
         
     }
@@ -128,6 +131,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let vc = segue.destination as? photoAlbumViewController {
             vc.dataController = dataController
+            vc.location = location
         }
     }
 }

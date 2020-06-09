@@ -46,20 +46,19 @@ class flickrClient {
         }
     }
     
-//    class func getImage(farmID: Int, serverId: String, iD: String, secret: String, completion: @escaping(UIImage?, Error?) -> Void) {
-//        let task = URLSession.shared.dataTask(with: Endpoint.photoSourceURL(farmID: farmID, serverId: serverId, iD: iD, secret: secret).url) { (data, _, error) in
-//            guard let data = data else {
-//                completion(nil, error)
-//                print("something wrong here in getting image & \(error?.localizedDescription ?? "")")
-//                return
-//            }
-//            print(data)
-//            let downloadedImage = UIImage(data: data)
-//            completion(downloadedImage, nil)
-//        }
-//        task.resume()
-//
-//    }
+    class func getImage(imageUrl: String, completion: @escaping(Data?, Error?) -> Void) {
+        let task = URLSession.shared.dataTask(with: URL(string: imageUrl)!) { (data, response, error) in
+            guard let data = data else {
+                completion(nil, error)
+                return
+            }
+            DispatchQueue.main.async {
+                completion(data, nil)
+            }
+            
+        }
+        task.resume()
+    }
     
     
     class func taskGETRequest<Response: Decodable>(url: URL, response: Response.Type, completion: @escaping (Response?, Error?) -> Void) {
@@ -74,8 +73,7 @@ class flickrClient {
             do {
                 let range = (14..<data.count)
                 var newData = data.subdata(in: range)
-                newData.popLast()
-                print(String(data: newData, encoding: .utf8)!)
+                _ = newData.popLast()
                 let object = try decoder.decode(Response.self, from: newData)
                 DispatchQueue.main.async {
                     completion(object, nil)

@@ -12,9 +12,10 @@ import CoreData
 
 class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource, NSFetchedResultsControllerDelegate {
    
-    var location: Location!
+    var location: [Location] = []
     var dataController: DataController!
     var fetchResultController: NSFetchedResultsController<FlickrImage>!
+  
    
    
     
@@ -94,13 +95,13 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         return fetchResultController.sections?[section].numberOfObjects ?? 0
        }
        
-       func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath) as! collectionCell
         let flickr = fetchResultController.object(at: indexPath)
-        
-        cell.imageView.image = UIImage(data: flickr.url!)
-        
-        
+        print(flickr)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 45) {
+            cell.imageView.image = UIImage(data: flickr.photo!)
+        }
         return cell
     }
 }

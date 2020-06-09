@@ -2,14 +2,13 @@
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19F101" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="FlickrImage" representedClassName="FlickrImage" syncable="YES" codeGenerationType="class">
         <attribute name="farm" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="height" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="owner" optional="YES" attributeType="String"/>
+        <attribute name="photo" optional="YES" attributeType="Binary"/>
         <attribute name="secret" optional="YES" attributeType="String"/>
         <attribute name="server" optional="YES" attributeType="String"/>
         <attribute name="title" optional="YES" attributeType="String"/>
-        <attribute name="url" optional="YES" attributeType="Binary"/>
-        <attribute name="width" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="url" optional="YES" attributeType="String"/>
         <relationship name="locations" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Location" inverseName="flickrImage" inverseEntity="Location"/>
     </entity>
     <entity name="Location" representedClassName="Location" syncable="YES" codeGenerationType="class">
@@ -18,7 +17,7 @@
         <relationship name="flickrImage" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="FlickrImage" inverseName="locations" inverseEntity="FlickrImage"/>
     </entity>
     <elements>
-        <element name="FlickrImage" positionX="-63" positionY="9" width="128" height="193"/>
-        <element name="Location" positionX="-63" positionY="-18" width="128" height="88"/>
+        <element name="FlickrImage" positionX="-63" positionY="9" width="128" height="178"/>
+        <element name="Location" positionX="-330.67578125" positionY="59.4140625" width="128" height="88"/>
     </elements>
 </model>

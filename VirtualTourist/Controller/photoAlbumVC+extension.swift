@@ -15,20 +15,18 @@ extension photoAlbumViewController {
     func downloadImageDetailsFromFlickr() {
         flickrClient.getImageDetailsFromFlickr(lat: 32.8297529087073, lon: -98.30174486714975) { (photo, error) in
             if error == nil {
-                let flickr = FlickrImage(context: self.dataController.viewContext)
                 for i in photo {
+                    let flickr = FlickrImage(context: self.dataController.viewContext)
+                    
                     flickr.id = i.id
+                    flickr.url = i.url_m
                     flickr.owner = i.owner
-                    flickr.server = i.server
                     flickr.secret = i.secret
-                    flickr.url = Data(i.url_m.utf8)
-                }
-                print(String(data: flickr.url!, encoding: .utf8)!)
-                do {
-                    try self.dataController.viewContext.save()
-                } catch {
-                    print(error.localizedDescription)
-                }
+                    flickr.server = i.server
+                    flickr.farm = Int16(Int(i.farm))
+                    try? self.dataController.viewContext.save()
+                    }
+                self.downloadImage()
             } else {
                 print(error?.localizedDescription ?? "Error in the fetch image block")
                 print("problem in downloading details.")
@@ -36,6 +34,21 @@ extension photoAlbumViewController {
         }
     }
     
+    func downloadImage() {
+        let flickr = FlickrImage(context: self.dataController.viewContext)
+        flickrClient.getImage(imageUrl: flickr.url!) { (data, error) in
+            if error == nil {
+                flickr.photo = data
+                do {
+                    print(flickr.photo!)
+                    try self.dataController.viewContext.save()
+                } catch {
+                    print(error.localizedDescription)
+                }
+            }
+        }
+    }
+
     
       func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
           let annotation = MKPointAnnotation()
