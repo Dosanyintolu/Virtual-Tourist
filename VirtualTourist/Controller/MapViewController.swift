@@ -68,8 +68,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
         annotation.coordinate = coordinate
         locationStore.longitude = annotation.coordinate.longitude
         locationStore.latitude = annotation.coordinate.latitude
-        mapView.addAnnotation(annotation)
         self.location.append(locationStore)
+        mapView.addAnnotation(annotation)
         do {
             try dataController.viewContext.save()
         }catch {
@@ -87,7 +87,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
             for location in self.fetchResultController.fetchedObjects! {
                 self.dataController.viewContext.delete(location)
                 try? self.dataController.viewContext.save()
-                self.location.removeAll()
             }
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
@@ -101,7 +100,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
             annotation.coordinate.latitude = location.latitude
             annotation.coordinate.longitude = location.longitude
             mapView.addAnnotation(annotation)
-            print(location)
         }
         
     }

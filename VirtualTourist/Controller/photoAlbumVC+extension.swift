@@ -15,17 +15,9 @@ extension photoAlbumViewController {
     func downloadImageDetailsFromFlickr() {
         flickrClient.getImageDetailsFromFlickr(lat: 32.8297529087073, lon: -98.30174486714975) { (photo, error) in
             if error == nil {
-                for i in photo {
-                    let flickr = FlickrImage(context: self.dataController.viewContext)
-                    
-                    flickr.id = i.id
-                    flickr.url = i.url_m
-                    flickr.owner = i.owner
-                    flickr.secret = i.secret
-                    flickr.server = i.server
-                    flickr.farm = Int16(Int(i.farm))
-                    try? self.dataController.viewContext.save()
-                    }
+                for image in photo {
+                    self.photoStore.append(image.url_m)
+                }
                 self.downloadImage()
             } else {
                 print(error?.localizedDescription ?? "Error in the fetch image block")
@@ -35,19 +27,20 @@ extension photoAlbumViewController {
     }
     
     func downloadImage() {
-        let flickr = FlickrImage(context: self.dataController.viewContext)
-        flickrClient.getImage(imageUrl: flickr.url!) { (data, error) in
+        for flickrImageURL in photoStore {
+            flickrClient.getImage(imageUrl: flickrImageURL) { (data, error) in
             if error == nil {
-                flickr.photo = data
-                do {
-                    print(flickr.photo!)
-                    try self.dataController.viewContext.save()
-                } catch {
-                    print(error.localizedDescription)
+                let flickrImage = FlickrImage(context: self.dataController.viewContext)
+                self.photoData.append(data!)
+                flickrImage.photo = data
+                try? self.dataController.viewContext.save()
+                print(flickrImage)
+            } else {
+                print(error?.localizedDescription ?? "Something went wrong downloading an image")
                 }
-            }
         }
     }
+}
 
     
       func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
@@ -66,5 +59,4 @@ extension photoAlbumViewController {
           }
           return pinView
       }
-    
-}
+    }

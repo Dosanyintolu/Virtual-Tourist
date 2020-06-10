@@ -18,7 +18,7 @@ class flickrClient {
     enum Endpoint{
        static let flickrbaseURL = "https://www.flickr.com/services/rest/?method=flickr.photos.search&"
        static let flickrApiKey = "api_key=\(flickrClient.apiKey)"
-       static let flickrPoint = "&media=Photo&per_page=3&extras=url_m&format=json"
+       static let flickrPoint = "&media=Photo&per_page=10&extras=url_m&format=json"
         
         
       case flickrSearchImageURL(Double, Double)

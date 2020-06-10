@@ -34,7 +34,7 @@
                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="k97-9H-2HD">
                                 <rect key="frame" x="341" y="2" width="53" height="40"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" weight="thin" pointSize="20"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <state key="normal" title="Clear">
                                     <color key="titleColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
@@ -73,7 +73,7 @@
                                         </constraints>
                                     </mapView>
                                     <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="bzP-2R-FJi">
-                                        <rect key="frame" x="0.0" y="183" width="414" height="625"/>
+                                        <rect key="frame" x="0.0" y="183" width="414" height="580"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="414" id="Lu9-FD-UVf"/>
@@ -85,7 +85,7 @@
                                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         </collectionViewFlowLayout>
                                         <label key="backgroundView" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Image Found" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ewn-E1-M8X">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="625"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="580"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="21"/>
                                             <nil key="textColor"/>
@@ -125,6 +125,12 @@
                                             <outlet property="delegate" destination="nU5-Uc-sT4" id="rT7-5u-gdr"/>
                                         </connections>
                                     </collectionView>
+                                    <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Vbr-MY-y1v">
+                                        <rect key="frame" x="0.0" y="764" width="414" height="44"/>
+                                        <items>
+                                            <barButtonItem title="New Images" id="LhU-Dc-V0p"/>
+                                        </items>
+                                    </toolbar>
                                 </subviews>
                             </stackView>
                         </subviews>
@@ -140,9 +146,10 @@
                     <navigationItem key="navigationItem" id="cUO-FE-pP3">
                         <barButtonItem key="rightBarButtonItem" id="gvU-MO-IIP">
                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="9J8-XN-Kx5">
-                                <rect key="frame" x="302" y="7" width="92" height="30"/>
+                                <rect key="frame" x="302" y="5" width="92" height="34"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Clear"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <state key="normal" title="Edit"/>
                                 <connections>
                                     <action selector="deleteButton:" destination="nU5-Uc-sT4" eventType="touchUpInside" id="l5q-uo-h5j"/>
                                 </connections>
@@ -170,7 +177,7 @@
                         <rect key="frame" x="0.0" y="44" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <textAttributes key="titleTextAttributes">
-                            <fontDescription key="fontDescription" type="system" weight="thin" pointSize="20"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="20"/>
                             <color key="textColor" systemColor="systemBlueColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         </textAttributes>
                         <textAttributes key="largeTitleTextAttributes">

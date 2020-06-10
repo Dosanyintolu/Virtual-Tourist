@@ -15,6 +15,9 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     var location: [Location] = []
     var dataController: DataController!
     var fetchResultController: NSFetchedResultsController<FlickrImage>!
+    var photoStore: [String] = []
+    var photoData: [Data] = []
+    var flickr: [FlickrImage] = []
   
    
    
@@ -34,13 +37,12 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         photoCollection.delegate = self
         photoCollection.dataSource = self
         imageLabel.isHidden = true
-        downloadImageDetailsFromFlickr()
         let space: CGFloat = 1.0
         let dimension = (view.frame.size.width - (2 * space)) / 1.5
-        
         flowLayout.minimumInteritemSpacing = space
         flowLayout.minimumLineSpacing = space
         flowLayout.itemSize = CGSize(width: dimension, height: dimension)
+        print()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -56,9 +58,15 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         downloadImageDetailsFromFlickr()
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        fetchResultController = nil
+    }
+    
     func setUpFetchedResultsViewController() {
            let fetchRequest: NSFetchRequest<FlickrImage> = FlickrImage.fetchRequest()
-           let sortDescriptor = NSSortDescriptor(key: "id", ascending: false)
+           let sortDescriptor = NSSortDescriptor(key: "photo", ascending: false)
            fetchRequest.sortDescriptors = [sortDescriptor]
         fetchResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: nil)
         
@@ -73,13 +81,18 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     
     
     @IBAction func deleteButton(_ sender: Any) {
-        
         for image in fetchResultController.fetchedObjects! {
             dataController.viewContext.delete(image)
             try? dataController.viewContext.save()
         }
         photoCollection.reloadData()
     }
+    
+//    func delete(at indexPath: IndexPath) {
+//        let imageToDelete = fetchResultController.object(at: indexPath)
+//        dataController.viewContext.delete(imageToDelete)
+//        try? dataController.viewContext.save()
+//    }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return fetchResultController.sections?.count ?? 1
@@ -97,11 +110,15 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
        
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath) as! collectionCell
-        let flickr = fetchResultController.object(at: indexPath)
-        print(flickr)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 45) {
-            cell.imageView.image = UIImage(data: flickr.photo!)
-        }
+        let image = fetchResultController.object(at: indexPath)
+        
+        if image.photo == nil {
+            self.imageLabel.isHidden = false
+        } else {
+        DispatchQueue.main.async {
+            cell.imageView.image = UIImage(data: image.photo!)
+            }
+    }
         return cell
     }
 }
