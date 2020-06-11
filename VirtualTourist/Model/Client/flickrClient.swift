@@ -16,9 +16,11 @@ class flickrClient {
     static let secretKey = "62d9773207c04617"
     
     enum Endpoint{
+       static let randomNumber = Int.random(in: 0..<2000)
        static let flickrbaseURL = "https://www.flickr.com/services/rest/?method=flickr.photos.search&"
        static let flickrApiKey = "api_key=\(flickrClient.apiKey)"
-       static let flickrPoint = "&media=Photo&per_page=10&extras=url_m&format=json"
+        static let flickrPoint = "&media=Photo&per_page=10&extras=url_m&format=json"
+       
         
         
       case flickrSearchImageURL(Double, Double)
@@ -27,7 +29,7 @@ class flickrClient {
         var stringValue: String{
             switch self {
             case .flickrSearchImageURL(let lat,let lon):
-                return Endpoint.flickrbaseURL + Endpoint.flickrApiKey + "&lat=\(lat)&lon=\(lon)" + Endpoint.flickrPoint
+                return Endpoint.flickrbaseURL + Endpoint.flickrApiKey + "&lat=\(lat)&lon=\(lon)" + "&page=\(Endpoint.randomNumber)" + Endpoint.flickrPoint
             }
         }
         

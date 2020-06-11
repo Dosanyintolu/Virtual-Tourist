@@ -12,23 +12,20 @@ import CoreData
 
 class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource, NSFetchedResultsControllerDelegate {
    
-    var location: [Location] = []
+    var location: [MKAnnotation]!
     var dataController: DataController!
     var fetchResultController: NSFetchedResultsController<FlickrImage>!
     var photoStore: [String] = []
     var photoData: [Data] = []
     var flickr: [FlickrImage] = []
-  
-   
-   
+    var locationValue: MKAnnotation!
     
-    
+    @IBOutlet weak var newCollectionButton: UIButton!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var photoCollection: UICollectionView!
     @IBOutlet weak var imageLabel: UILabel!
     @IBOutlet weak var clearbutton: UIButton!
-    @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
-    
+    @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,20 +39,31 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         flowLayout.minimumInteritemSpacing = space
         flowLayout.minimumLineSpacing = space
         flowLayout.itemSize = CGSize(width: dimension, height: dimension)
-        print()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        for location in location {
+            self.locationValue = location
         let annotation = MKPointAnnotation()
-        let coordinate = CLLocationCoordinate2D(latitude: 32.8297529087073 , longitude: -98.30174486714975)
+            let coordinate = CLLocationCoordinate2D(latitude: location.coordinate.latitude , longitude: location.coordinate.longitude)
         let span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
         let region = MKCoordinateRegion(center: coordinate, span: span)
         annotation.coordinate = coordinate
         mapView.setRegion(region, animated: true)
         mapView.addAnnotation(annotation)
+        }
         setUpFetchedResultsViewController()
-        downloadImageDetailsFromFlickr()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+            self.downloadImageDetailsFromFlickr()
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+       
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -79,6 +87,11 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
            }
        }
     
+    @IBAction func fetchNewImages(_ sender: Any) {
+        
+        downloadImageDetailsFromFlickr()
+        
+    }
     
     @IBAction func deleteButton(_ sender: Any) {
         for image in fetchResultController.fetchedObjects! {
@@ -87,12 +100,6 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         }
         photoCollection.reloadData()
     }
-    
-//    func delete(at indexPath: IndexPath) {
-//        let imageToDelete = fetchResultController.object(at: indexPath)
-//        dataController.viewContext.delete(imageToDelete)
-//        try? dataController.viewContext.save()
-//    }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return fetchResultController.sections?.count ?? 1

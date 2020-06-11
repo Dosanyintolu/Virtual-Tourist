@@ -62,8 +62,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="1" translatesAutoresizingMaskIntoConstraints="NO" id="bTc-AT-Tcq">
-                                <rect key="frame" x="0.0" y="88" width="414" height="808"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="bTc-AT-Tcq">
+                                <rect key="frame" x="0.0" y="88" width="414" height="747"/>
                                 <subviews>
                                     <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="494-N2-Zq1">
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="182"/>
@@ -73,11 +73,8 @@
                                         </constraints>
                                     </mapView>
                                     <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="bzP-2R-FJi">
-                                        <rect key="frame" x="0.0" y="183" width="414" height="580"/>
+                                        <rect key="frame" x="0.0" y="182" width="414" height="565"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="414" id="Lu9-FD-UVf"/>
-                                        </constraints>
                                         <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="2DL-YA-DnG">
                                             <size key="itemSize" width="136" height="111"/>
                                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -85,7 +82,7 @@
                                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         </collectionViewFlowLayout>
                                         <label key="backgroundView" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Image Found" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ewn-E1-M8X">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="580"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="565"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="21"/>
                                             <nil key="textColor"/>
@@ -125,28 +122,41 @@
                                             <outlet property="delegate" destination="nU5-Uc-sT4" id="rT7-5u-gdr"/>
                                         </connections>
                                     </collectionView>
-                                    <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Vbr-MY-y1v">
-                                        <rect key="frame" x="0.0" y="764" width="414" height="44"/>
-                                        <items>
-                                            <barButtonItem title="New Images" id="LhU-Dc-V0p"/>
-                                        </items>
-                                    </toolbar>
                                 </subviews>
                             </stackView>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="F6l-kx-aQa">
+                                <rect key="frame" x="0.0" y="835" width="414" height="49"/>
+                                <items>
+                                    <barButtonItem style="plain" id="1yk-G6-yIX">
+                                        <button key="customView" opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Kuq-s9-P6S">
+                                            <rect key="frame" x="20" y="9" width="374" height="36"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                            <state key="normal" title="New Collection"/>
+                                            <connections>
+                                                <action selector="fetchNewImages:" destination="nU5-Uc-sT4" eventType="touchUpInside" id="v4V-Le-ibh"/>
+                                            </connections>
+                                        </button>
+                                    </barButtonItem>
+                                </items>
+                            </toolbar>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="bTc-AT-Tcq" firstAttribute="top" secondItem="RSl-VP-ag0" secondAttribute="top" id="5s4-kF-YEc"/>
                             <constraint firstItem="bTc-AT-Tcq" firstAttribute="trailing" secondItem="RSl-VP-ag0" secondAttribute="trailing" id="GLI-GR-P4L"/>
-                            <constraint firstAttribute="bottom" secondItem="bTc-AT-Tcq" secondAttribute="bottom" id="eaI-4b-xHR"/>
+                            <constraint firstItem="F6l-kx-aQa" firstAttribute="leading" secondItem="RSl-VP-ag0" secondAttribute="leading" id="Nz8-gI-5FH"/>
+                            <constraint firstItem="F6l-kx-aQa" firstAttribute="top" secondItem="bTc-AT-Tcq" secondAttribute="bottom" id="Rel-Mo-slZ"/>
+                            <constraint firstAttribute="bottom" secondItem="F6l-kx-aQa" secondAttribute="bottom" constant="12" id="VI2-vm-a5o"/>
+                            <constraint firstItem="F6l-kx-aQa" firstAttribute="trailing" secondItem="RSl-VP-ag0" secondAttribute="trailing" id="t55-ya-075"/>
                             <constraint firstItem="bTc-AT-Tcq" firstAttribute="leading" secondItem="RSl-VP-ag0" secondAttribute="leading" id="zKy-wx-k5P"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="RSl-VP-ag0"/>
                     </view>
                     <navigationItem key="navigationItem" id="cUO-FE-pP3">
                         <barButtonItem key="rightBarButtonItem" id="gvU-MO-IIP">
-                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="9J8-XN-Kx5">
-                                <rect key="frame" x="302" y="5" width="92" height="34"/>
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="9J8-XN-Kx5">
+                                <rect key="frame" x="302" y="4" width="92" height="36"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <state key="normal" title="Edit"/>
@@ -161,6 +171,7 @@
                         <outlet property="flowLayout" destination="2DL-YA-DnG" id="RYh-pi-KLg"/>
                         <outlet property="imageLabel" destination="ewn-E1-M8X" id="F7a-C0-kT9"/>
                         <outlet property="mapView" destination="494-N2-Zq1" id="731-SB-IWT"/>
+                        <outlet property="newCollectionButton" destination="Kuq-s9-P6S" id="g4J-hS-YYl"/>
                         <outlet property="photoCollection" destination="bzP-2R-FJi" id="iV3-xy-sKf"/>
                     </connections>
                 </viewController>

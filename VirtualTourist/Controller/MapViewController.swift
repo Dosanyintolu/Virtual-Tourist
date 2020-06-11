@@ -15,9 +15,11 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var clearButton: UIButton!
     
-    var location: [Location] = []
+    var location: [MKAnnotation]!
+    var localStore: Location!
     var dataController: DataController!
     var fetchResultController: NSFetchedResultsController<Location>!
+    let locationDefaults =  UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,6 +31,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
         mapView.addGestureRecognizer(gestureRecognizer)
         setUpFetchedResultsViewController()
         getLocationFromCoreData()
+        mapViewInterfaceStore()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -40,6 +43,21 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         fetchResultController = nil
+        mapViewInterfaceStore()
+    }
+    
+    func mapViewInterfaceStore() {
+        locationDefaults.set(mapView.centerCoordinate.latitude, forKey: "latitude")
+        locationDefaults.set(mapView.centerCoordinate.longitude, forKey: "longitude")
+        locationDefaults.set(mapView.region.span.latitudeDelta, forKey: "latDelta")
+        locationDefaults.set(mapView.region.span.longitudeDelta, forKey: "lonDelta")
+    }
+    
+    func mapViewInterfaceSetUp() {
+        let coordinate = CLLocationCoordinate2D(latitude:locationDefaults.double(forKey: "latitude") , longitude: locationDefaults.double(forKey: "longitude"))
+        let span = MKCoordinateSpan(latitudeDelta: locationDefaults.double(forKey: "latDelta"), longitudeDelta: locationDefaults.double(forKey: "lonDelta"))
+        let region = MKCoordinateRegion(center: coordinate, span: span)
+        mapView.setRegion(region, animated: true)
     }
     
     
@@ -68,7 +86,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
         annotation.coordinate = coordinate
         locationStore.longitude = annotation.coordinate.longitude
         locationStore.latitude = annotation.coordinate.latitude
-        self.location.append(locationStore)
         mapView.addAnnotation(annotation)
         do {
             try dataController.viewContext.save()
@@ -94,42 +111,10 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
         
     }
     
-    func getLocationFromCoreData() {
-        for location in fetchResultController.fetchedObjects! {
-            let annotation = MKPointAnnotation()
-            annotation.coordinate.latitude = location.latitude
-            annotation.coordinate.longitude = location.longitude
-            mapView.addAnnotation(annotation)
-        }
-        
-    }
-    
-    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        let reuseId = "pin"
-        var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
-
-        if pinView == nil {
-            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
-            pinView!.animatesDrop = true
-            pinView!.rightCalloutAccessoryView = UIButton(type: .infoDark)
-            pinView!.pinTintColor = UIColor.red
-        }
-        else {
-            pinView!.annotation = annotation
-        }
-        return pinView
-        
-    }
-    
-     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        performSegue(withIdentifier: "toPhotos", sender: nil)
-        
-    }
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let vc = segue.destination as? photoAlbumViewController {
-            vc.dataController = dataController
-            vc.location = location
+                vc.dataController = dataController
+                vc.location = location
         }
     }
 }

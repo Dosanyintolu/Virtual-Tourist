@@ -21,6 +21,7 @@
 		76AAEF58247A1ED20080C94F /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76AAEF57247A1ED20080C94F /* Photo.swift */; };
 		76AAEF5D247A21070080C94F /* Photos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76AAEF5C247A21070080C94F /* Photos.swift */; };
 		76AAEF63247A2EBE0080C94F /* collectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76AAEF62247A2EBE0080C94F /* collectionCell.swift */; };
+		76D7FC2C24915BF00002C5FD /* MapViewController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76D7FC2B24915BF00002C5FD /* MapViewController+Extension.swift */; };
 		76FBC26F2487753A0010C4FB /* photoAlbumVC+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76FBC26E2487753A0010C4FB /* photoAlbumVC+extension.swift */; };
 /* End PBXBuildFile section */
 
@@ -41,6 +42,7 @@
 		76AAEF57247A1ED20080C94F /* Photo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
 		76AAEF5C247A21070080C94F /* Photos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Photos.swift; sourceTree = "<group>"; };
 		76AAEF62247A2EBE0080C94F /* collectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = collectionCell.swift; sourceTree = "<group>"; };
+		76D7FC2B24915BF00002C5FD /* MapViewController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MapViewController+Extension.swift"; sourceTree = "<group>"; };
 		76FBC26E2487753A0010C4FB /* photoAlbumVC+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "photoAlbumVC+extension.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -102,6 +104,7 @@
 			isa = PBXGroup;
 			children = (
 				761B914B2479B3FF00B03FF3 /* MapViewController.swift */,
+				76D7FC2B24915BF00002C5FD /* MapViewController+Extension.swift */,
 				761B91602479B62F00B03FF3 /* PhotoAlbumViewController.swift */,
 				76FBC26E2487753A0010C4FB /* photoAlbumVC+extension.swift */,
 			);
@@ -225,6 +228,7 @@
 				761B91612479B62F00B03FF3 /* PhotoAlbumViewController.swift in Sources */,
 				761B91522479B3FF00B03FF3 /* VirtualTourist.xcdatamodeld in Sources */,
 				76AAEF63247A2EBE0080C94F /* collectionCell.swift in Sources */,
+				76D7FC2C24915BF00002C5FD /* MapViewController+Extension.swift in Sources */,
 				761B914C2479B3FF00B03FF3 /* MapViewController.swift in Sources */,
 				7611FC08247DF79D00713A67 /* DataController.swift in Sources */,
 				761B91482479B3FF00B03FF3 /* AppDelegate.swift in Sources */,
