@@ -12,13 +12,13 @@ import CoreData
 
 class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource, NSFetchedResultsControllerDelegate {
    
-    var location: [MKAnnotation]!
+    var location: [Location]!
     var dataController: DataController!
     var fetchResultController: NSFetchedResultsController<FlickrImage>!
     var photoStore: [String] = []
     var photoData: [Data] = []
     var flickr: [FlickrImage] = []
-    var locationValue: MKAnnotation!
+    var locationValue: Location!
     
     @IBOutlet weak var newCollectionButton: UIButton!
     @IBOutlet weak var mapView: MKMapView!
@@ -47,7 +47,7 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         for location in location {
             self.locationValue = location
         let annotation = MKPointAnnotation()
-            let coordinate = CLLocationCoordinate2D(latitude: location.coordinate.latitude , longitude: location.coordinate.longitude)
+            let coordinate = CLLocationCoordinate2D(latitude: location.latitude , longitude: location.longitude)
         let span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
         let region = MKCoordinateRegion(center: coordinate, span: span)
         annotation.coordinate = coordinate
@@ -88,8 +88,19 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
        }
     
     @IBAction func fetchNewImages(_ sender: Any) {
-        
-        downloadImageDetailsFromFlickr()
+        let imagesInFlickr = fetchResultController.fetchedObjects!
+        if imagesInFlickr.count == 0 {
+            downloadImageDetailsFromFlickr()
+            try? dataController.viewContext.save()
+            photoCollection.reloadData()
+        } else {
+            for image in imagesInFlickr {
+                dataController.viewContext.delete(image)
+                downloadImageDetailsFromFlickr()
+                try? dataController.viewContext.save()
+                photoCollection.reloadData()
+            }
+        }
         
     }
     
@@ -114,7 +125,24 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         
         return fetchResultController.sections?[section].numberOfObjects ?? 0
        }
-       
+    
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath) as! collectionCell
+        
+        if cell.isSelected {
+            let alertVC = UIAlertController(title: .none, message: .none, preferredStyle: .actionSheet)
+            alertVC.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            alertVC.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (_) in
+                let image = self.fetchResultController.object(at: indexPath)
+                self.dataController.viewContext.delete(image)
+                try? self.dataController.viewContext.save()
+                self.photoCollection.reloadData()
+            }))
+            present(alertVC, animated: true, completion: nil)
+        }
+    }
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath) as! collectionCell
         let image = fetchResultController.object(at: indexPath)

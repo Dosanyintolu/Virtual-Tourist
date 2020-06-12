@@ -41,7 +41,14 @@ extension MapViewController {
        
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
            performSegue(withIdentifier: "toPhotos", sender: nil)
-        location.append(mapView.selectedAnnotations[0])
+        let savedPins = fetchResultController.fetchedObjects!
+        for location in savedPins {
+            if location.latitude == view.annotation?.coordinate.latitude && location.longitude == view.annotation?.coordinate.longitude {
+                self.localStore.append(location)
+                print(self.localStore)
+            } else {
+                print("No value")
+            }
         }
-    
+    }
 }

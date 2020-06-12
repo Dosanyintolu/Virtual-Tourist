@@ -16,7 +16,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     @IBOutlet weak var clearButton: UIButton!
     
     var location: [MKAnnotation]!
-    var localStore: Location!
+    var localStore: [Location] = []
     var dataController: DataController!
     var fetchResultController: NSFetchedResultsController<Location>!
     let locationDefaults =  UserDefaults.standard
@@ -86,6 +86,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
         annotation.coordinate = coordinate
         locationStore.longitude = annotation.coordinate.longitude
         locationStore.latitude = annotation.coordinate.latitude
+        
+        localStore.append(locationStore)
         mapView.addAnnotation(annotation)
         do {
             try dataController.viewContext.save()
@@ -114,7 +116,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let vc = segue.destination as? photoAlbumViewController {
                 vc.dataController = dataController
-                vc.location = location
+                vc.location = localStore
         }
     }
 }

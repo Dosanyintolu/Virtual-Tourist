@@ -13,7 +13,7 @@ import MapKit
 extension photoAlbumViewController {
     
     func downloadImageDetailsFromFlickr() {
-        flickrClient.getImageDetailsFromFlickr(lat: locationValue.coordinate.latitude, lon: locationValue.coordinate.longitude) { (photo, error) in
+        flickrClient.getImageDetailsFromFlickr(lat: locationValue.latitude, lon: locationValue.longitude) { (photo, error) in
             self.imageLoading(is: true)
             if error == nil {
                 for image in photo {
@@ -61,7 +61,6 @@ extension photoAlbumViewController {
           }
           return pinView
       }
-    
     
     func imageLoading(is downloading: Bool) {
         newCollectionButton.isEnabled = !downloading
