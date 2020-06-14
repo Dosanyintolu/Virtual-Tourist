@@ -30,16 +30,16 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpMapView()
-        collectionViewFlowLayout()
         photoCollection.delegate = self
         photoCollection.dataSource = self
-        setUpFetchedResultsViewController()
+        checkForImages()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        downloadImageDetailsFromFlickr()
         imageLabel.isHidden = true
+        setUpFetchedResultsViewController()
+//        checkForImages()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -50,7 +50,7 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     func setUpMapView() {
         mapView.delegate = self
         let annotation = MKPointAnnotation()
-        let coordinate = CLLocationCoordinate2D(latitude: latitude , longitude: longitude)
+        let coordinate = CLLocationCoordinate2D(latitude: 36.83726811884947, longitude: -83.94480415458935)
         let span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
         let region = MKCoordinateRegion(center: coordinate, span: span)
         annotation.coordinate = coordinate
@@ -84,7 +84,7 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     @IBAction func fetchNewImages(_ sender: Any) {
     let imagesInFlickr = fetchResultController.fetchedObjects!
         
-    if imagesInFlickr.count == 0 {
+    if imagesInFlickr.count != 0 {
             for image in imagesInFlickr {
                 dataController.viewContext.delete(image)
                 downloadImageDetailsFromFlickr()
@@ -107,12 +107,12 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
            newCollectionButton.isEnabled = !downloading
        }
        
-//    func checkForImages() {
-//       let flickrImages = fetchResultController.fetchedObjects!
-//           if flickrImages.count == 0 {
-//               self.downloadImageDetailsFromFlickr()
-//           }
-//       }
+    func checkForImages() {
+        let imageCheck = FlickrImage(context: dataController.viewContext)
+        if imageCheck.photo?.isEmpty ?? false{
+                self.downloadImageDetailsFromFlickr()
+        }
+    }
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
            switch type {

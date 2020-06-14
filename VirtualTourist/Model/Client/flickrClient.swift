@@ -19,7 +19,7 @@ class flickrClient {
        static let randomNumber = Int.random(in: 0..<2000)
        static let flickrbaseURL = "https://www.flickr.com/services/rest/?method=flickr.photos.search&"
        static let flickrApiKey = "api_key=\(flickrClient.apiKey)"
-        static let flickrPoint = "&media=Photo&per_page=2&extras=url_m&format=json"
+       static let flickrPoint = "&media=Photo&per_page=20&extras=url_m&format=json"
        
         
         

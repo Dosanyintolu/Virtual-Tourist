@@ -45,6 +45,7 @@ extension MapViewController {
         selectedAnnotation = view.annotation as? MKPointAnnotation
         latitude = selectedAnnotation.coordinate.latitude
         longitude = selectedAnnotation.coordinate.longitude
+        print("location is \(latitude), \(longitude)")
     }
     
     

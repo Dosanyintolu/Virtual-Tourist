@@ -13,7 +13,7 @@ import MapKit
 extension photoAlbumViewController  {
     
     func downloadImageDetailsFromFlickr() {
-        flickrClient.getImageDetailsFromFlickr(lat: latitude, lon: longitude) { (photo, error) in
+        flickrClient.getImageDetailsFromFlickr(lat: 36.83726811884947, lon: -83.94480415458935) { (photo, error) in
             self.imageLoading(is: true)
             if error == nil {
                 for image in photo {
@@ -94,7 +94,7 @@ extension photoAlbumViewController  {
            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath) as! collectionCell
            let image = fetchResultController.object(at: indexPath)
            
-           if image.photo == nil {
+        if image.photo?.isEmpty ?? false {
                self.imageLabel.isHidden = false
            } else {
            DispatchQueue.main.async {

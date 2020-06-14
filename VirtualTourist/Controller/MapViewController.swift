@@ -20,6 +20,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     var dataController: DataController!
     var fetchResultController: NSFetchedResultsController<Location>!
     let locationDefaults =  UserDefaults.standard
+   
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,6 +28,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
         
         mapView.delegate = self
         let gestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(mapViewTapped(gestureRecognizer:)))
+        gestureRecognizer.numberOfTapsRequired = 1
         gestureRecognizer.delegate = self
         mapView.addGestureRecognizer(gestureRecognizer)
         setUpFetchedResultsViewController()
@@ -34,35 +36,37 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
         mapViewInterfaceStore()
         mapView.showsBuildings = true
         mapView.showsCompass = true
+        mapViewInterfaceSetUp()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setUpFetchedResultsViewController()
-        mapViewInterfaceSetUp()
-        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         fetchResultController = nil
-        mapViewInterfaceStore()
     }
     
     func mapViewInterfaceStore() {
         locationDefaults.set(mapView.centerCoordinate.latitude, forKey: "latitude")
         locationDefaults.set(mapView.centerCoordinate.longitude, forKey: "longitude")
-        locationDefaults.set(mapView.region.span.latitudeDelta, forKey: "latDelta")
-        locationDefaults.set(mapView.region.span.longitudeDelta, forKey: "lonDelta")
+        locationDefaults.set(12.0, forKey: "latDelta")
+        locationDefaults.set(12.0, forKey: "lonDelta")
     }
     
     func mapViewInterfaceSetUp() {
-        let coordinate = CLLocationCoordinate2D(latitude:locationDefaults.double(forKey: "latitude") , longitude: locationDefaults.double(forKey: "longitude"))
+        let coordinate = CLLocationCoordinate2D(latitude:locationDefaults.double(forKey: "latitude"), longitude: locationDefaults.double(forKey: "longitude"))
         let span = MKCoordinateSpan(latitudeDelta: locationDefaults.double(forKey: "latDelta"), longitudeDelta: locationDefaults.double(forKey: "lonDelta"))
         let region = MKCoordinateRegion(center: coordinate, span: span)
         mapView.setRegion(region, animated: true)
     }
     
+    
+    func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
+        mapViewInterfaceStore()
+    }
     
     func setUpFetchedResultsViewController() {
         let fetchRequest: NSFetchRequest<Location> = Location.fetchRequest()

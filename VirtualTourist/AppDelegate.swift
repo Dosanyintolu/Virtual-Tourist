@@ -36,9 +36,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         saveViewContext()
     }
-    
-    
-   
     func saveViewContext() {
         try? dataController.viewContext.save()
     }
