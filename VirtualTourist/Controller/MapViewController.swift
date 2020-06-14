@@ -15,8 +15,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var clearButton: UIButton!
     
-    var location: [MKAnnotation]!
-    var localStore: [Location] = []
+    var latitude: Double = 0.0
+    var longitude: Double = 0.0
     var dataController: DataController!
     var fetchResultController: NSFetchedResultsController<Location>!
     let locationDefaults =  UserDefaults.standard
@@ -32,11 +32,14 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
         setUpFetchedResultsViewController()
         getLocationFromCoreData()
         mapViewInterfaceStore()
+        mapView.showsBuildings = true
+        mapView.showsCompass = true
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setUpFetchedResultsViewController()
+        mapViewInterfaceSetUp()
         
     }
     
@@ -87,7 +90,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
         locationStore.longitude = annotation.coordinate.longitude
         locationStore.latitude = annotation.coordinate.latitude
         
-        localStore.append(locationStore)
+//        localStore.append(locationStore)
         mapView.addAnnotation(annotation)
         do {
             try dataController.viewContext.save()
@@ -115,9 +118,10 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let vc = segue.destination as? photoAlbumViewController {
-                vc.dataController = dataController
-                vc.location = localStore
+            vc.dataController = dataController
+            vc.longitude = longitude
+            vc.latitude = latitude
         }
-    }
+   }
 }
 

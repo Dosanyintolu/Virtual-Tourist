@@ -12,13 +12,13 @@ import CoreData
 
 class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource, NSFetchedResultsControllerDelegate {
    
-    var location: [Location]!
     var dataController: DataController!
     var fetchResultController: NSFetchedResultsController<FlickrImage>!
     var photoStore: [String] = []
     var photoData: [Data] = []
-    var flickr: [FlickrImage] = []
-    var locationValue: Location!
+    var latitude: Double = 0.0
+    var longitude: Double = 0.0
+    
     
     @IBOutlet weak var newCollectionButton: UIButton!
     @IBOutlet weak var mapView: MKMapView!
@@ -29,47 +29,41 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        mapView.delegate = self
+        setUpMapView()
+        collectionViewFlowLayout()
         photoCollection.delegate = self
         photoCollection.dataSource = self
-        imageLabel.isHidden = true
-        let space: CGFloat = 1.0
-        let dimension = (view.frame.size.width - (2 * space)) / 1.5
-        flowLayout.minimumInteritemSpacing = space
-        flowLayout.minimumLineSpacing = space
-        flowLayout.itemSize = CGSize(width: dimension, height: dimension)
+        setUpFetchedResultsViewController()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        for location in location {
-            self.locationValue = location
+        downloadImageDetailsFromFlickr()
+        imageLabel.isHidden = true
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        fetchResultController = nil
+    }
+    
+    func setUpMapView() {
+        mapView.delegate = self
         let annotation = MKPointAnnotation()
-            let coordinate = CLLocationCoordinate2D(latitude: location.latitude , longitude: location.longitude)
+        let coordinate = CLLocationCoordinate2D(latitude: latitude , longitude: longitude)
         let span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
         let region = MKCoordinateRegion(center: coordinate, span: span)
         annotation.coordinate = coordinate
         mapView.setRegion(region, animated: true)
         mapView.addAnnotation(annotation)
-        }
-        setUpFetchedResultsViewController()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-            self.downloadImageDetailsFromFlickr()
-        }
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-       
-        
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        fetchResultController = nil
+    func collectionViewFlowLayout() {
+        let space: CGFloat = 1.0
+        let dimension = (view.frame.size.width - (2 * space)) / 1.5
+        flowLayout.minimumInteritemSpacing = space
+        flowLayout.minimumLineSpacing = space
+        flowLayout.itemSize = CGSize(width: dimension, height: dimension)
     }
     
     func setUpFetchedResultsViewController() {
@@ -88,72 +82,44 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
        }
     
     @IBAction func fetchNewImages(_ sender: Any) {
-        let imagesInFlickr = fetchResultController.fetchedObjects!
-        if imagesInFlickr.count == 0 {
-            downloadImageDetailsFromFlickr()
-            try? dataController.viewContext.save()
-            photoCollection.reloadData()
-        } else {
+    let imagesInFlickr = fetchResultController.fetchedObjects!
+        
+    if imagesInFlickr.count == 0 {
             for image in imagesInFlickr {
                 dataController.viewContext.delete(image)
                 downloadImageDetailsFromFlickr()
                 try? dataController.viewContext.save()
                 photoCollection.reloadData()
             }
+        downloadImageDetailsFromFlickr()
         }
-        
     }
     
-    @IBAction func deleteButton(_ sender: Any) {
-        for image in fetchResultController.fetchedObjects! {
-            dataController.viewContext.delete(image)
+    @IBAction func deleteAllImages(_ sender: Any) {
+        for images in fetchResultController.fetchedObjects! {
+            dataController.viewContext.delete(images)
             try? dataController.viewContext.save()
+            photoCollection.reloadData()
         }
-        photoCollection.reloadData()
     }
     
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return fetchResultController.sections?.count ?? 1
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let flickr = fetchResultController.fetchedObjects!
-        
-        if flickr.count == 0 {
-            imageLabel.isHidden = false
-        }
-        
-        return fetchResultController.sections?[section].numberOfObjects ?? 0
+    func imageLoading(is downloading: Bool) {
+           newCollectionButton.isEnabled = !downloading
        }
+       
+//    func checkForImages() {
+//       let flickrImages = fetchResultController.fetchedObjects!
+//           if flickrImages.count == 0 {
+//               self.downloadImageDetailsFromFlickr()
+//           }
+//       }
     
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath) as! collectionCell
-        
-        if cell.isSelected {
-            let alertVC = UIAlertController(title: .none, message: .none, preferredStyle: .actionSheet)
-            alertVC.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-            alertVC.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (_) in
-                let image = self.fetchResultController.object(at: indexPath)
-                self.dataController.viewContext.delete(image)
-                try? self.dataController.viewContext.save()
-                self.photoCollection.reloadData()
-            }))
-            present(alertVC, animated: true, completion: nil)
-        }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath) as! collectionCell
-        let image = fetchResultController.object(at: indexPath)
-        
-        if image.photo == nil {
-            self.imageLabel.isHidden = false
-        } else {
-        DispatchQueue.main.async {
-            cell.imageView.image = UIImage(data: image.photo!)
-            }
-    }
-        return cell
-    }
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+           switch type {
+           case .delete: photoCollection.deleteItems(at: [indexPath!])
+           case .insert: photoCollection.insertItems(at: [indexPath!])
+           default:
+               break
+           }
+       }
 }

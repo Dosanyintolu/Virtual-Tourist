@@ -10,10 +10,10 @@ import Foundation
 import UIKit
 import MapKit
 
-extension photoAlbumViewController {
+extension photoAlbumViewController  {
     
     func downloadImageDetailsFromFlickr() {
-        flickrClient.getImageDetailsFromFlickr(lat: locationValue.latitude, lon: locationValue.longitude) { (photo, error) in
+        flickrClient.getImageDetailsFromFlickr(lat: latitude, lon: longitude) { (photo, error) in
             self.imageLoading(is: true)
             if error == nil {
                 for image in photo {
@@ -44,8 +44,7 @@ extension photoAlbumViewController {
     }
 }
 
-    
-      func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
           let annotation = MKPointAnnotation()
           let reuseId = "pin"
           var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
@@ -62,8 +61,47 @@ extension photoAlbumViewController {
           return pinView
       }
     
-    func imageLoading(is downloading: Bool) {
-        newCollectionButton.isEnabled = !downloading
-    }
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+          return fetchResultController.sections?.count ?? 1
+      }
+      
+      func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+          let flickr = fetchResultController.fetchedObjects!
+          
+          if flickr.count == 0 {
+              imageLabel.isHidden = false
+          }
+          return fetchResultController.sections?[section].numberOfObjects ?? 0
+      }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath) as! collectionCell
+           
+           if cell.isSelected {
+               let alertVC = UIAlertController(title: .none, message: .none, preferredStyle: .actionSheet)
+               alertVC.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+               alertVC.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (_) in
+                   let image = self.fetchResultController.object(at: indexPath)
+                   self.dataController.viewContext.delete(image)
+                   try? self.dataController.viewContext.save()
+                   self.photoCollection.reloadData()
+               }))
+               present(alertVC, animated: true, completion: nil)
+           }
+       }
+       
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+           let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath) as! collectionCell
+           let image = fetchResultController.object(at: indexPath)
+           
+           if image.photo == nil {
+               self.imageLabel.isHidden = false
+           } else {
+           DispatchQueue.main.async {
+               cell.imageView.image = UIImage(data: image.photo!)
+               }
+            photoCollection.reloadData()
+       }
+           return cell
+       }
 }

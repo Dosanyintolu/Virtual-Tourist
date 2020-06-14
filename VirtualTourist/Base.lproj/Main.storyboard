@@ -128,7 +128,7 @@
                                 <rect key="frame" x="0.0" y="835" width="414" height="49"/>
                                 <items>
                                     <barButtonItem style="plain" id="1yk-G6-yIX">
-                                        <button key="customView" opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Kuq-s9-P6S">
+                                        <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Kuq-s9-P6S">
                                             <rect key="frame" x="20" y="9" width="374" height="36"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="20"/>
@@ -154,20 +154,20 @@
                         <viewLayoutGuide key="safeArea" id="RSl-VP-ag0"/>
                     </view>
                     <navigationItem key="navigationItem" id="cUO-FE-pP3">
-                        <barButtonItem key="rightBarButtonItem" id="gvU-MO-IIP">
-                            <button key="customView" opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="9J8-XN-Kx5">
+                        <barButtonItem key="rightBarButtonItem" style="plain" id="mjk-tx-VEH">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="trailing" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="2QP-D3-8bJ">
                                 <rect key="frame" x="302" y="4" width="92" height="36"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <state key="normal" title="Edit"/>
+                                <state key="normal" title="Clear All"/>
                                 <connections>
-                                    <action selector="deleteButton:" destination="nU5-Uc-sT4" eventType="touchUpInside" id="l5q-uo-h5j"/>
+                                    <action selector="deleteAllImages:" destination="nU5-Uc-sT4" eventType="touchUpInside" id="IXl-YN-i9y"/>
                                 </connections>
                             </button>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="clearbutton" destination="9J8-XN-Kx5" id="X2V-zC-QyD"/>
+                        <outlet property="clearbutton" destination="2QP-D3-8bJ" id="hfH-ck-IgS"/>
                         <outlet property="flowLayout" destination="2DL-YA-DnG" id="RYh-pi-KLg"/>
                         <outlet property="imageLabel" destination="ewn-E1-M8X" id="F7a-C0-kT9"/>
                         <outlet property="mapView" destination="494-N2-Zq1" id="731-SB-IWT"/>
