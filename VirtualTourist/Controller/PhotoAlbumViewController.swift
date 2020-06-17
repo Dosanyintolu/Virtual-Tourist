@@ -16,9 +16,8 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     var fetchResultController: NSFetchedResultsController<FlickrImage>!
     var photoStore: [String] = []
     var photoData: [Data] = []
-    var latitude: Double = 0.0
-    var longitude: Double = 0.0
-    
+    var latitude: Double = 0
+    var longitude: Double = 0
     
     @IBOutlet weak var newCollectionButton: UIButton!
     @IBOutlet weak var mapView: MKMapView!
@@ -29,17 +28,17 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setUpMapView()
         photoCollection.delegate = self
         photoCollection.dataSource = self
-        checkForImages()
+        collectionViewFlowLayout()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        setUpMapView()
         imageLabel.isHidden = true
         setUpFetchedResultsViewController()
-//        checkForImages()
+        downloadImageDetailsFromFlickr()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -49,8 +48,9 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     
     func setUpMapView() {
         mapView.delegate = self
+        print("the location is: \(latitude) \(longitude)")
         let annotation = MKPointAnnotation()
-        let coordinate = CLLocationCoordinate2D(latitude: 36.83726811884947, longitude: -83.94480415458935)
+        let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
         let span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
         let region = MKCoordinateRegion(center: coordinate, span: span)
         annotation.coordinate = coordinate
@@ -83,43 +83,40 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     
     @IBAction func fetchNewImages(_ sender: Any) {
     let imagesInFlickr = fetchResultController.fetchedObjects!
-        
-    if imagesInFlickr.count != 0 {
+    let imageContext = FlickrImage(context: dataController.viewContext)
+        if imageContext.photo?.count != 0 {
             for image in imagesInFlickr {
                 dataController.viewContext.delete(image)
-                downloadImageDetailsFromFlickr()
                 try? dataController.viewContext.save()
-                photoCollection.reloadData()
             }
-        downloadImageDetailsFromFlickr()
-        }
-    }
-    
-    @IBAction func deleteAllImages(_ sender: Any) {
-        for images in fetchResultController.fetchedObjects! {
-            dataController.viewContext.delete(images)
-            try? dataController.viewContext.save()
-            photoCollection.reloadData()
+            downloadImageDetailsFromFlickr()
         }
     }
     
     func imageLoading(is downloading: Bool) {
            newCollectionButton.isEnabled = !downloading
        }
-       
-    func checkForImages() {
-        let imageCheck = FlickrImage(context: dataController.viewContext)
-        if imageCheck.photo?.isEmpty ?? false{
-                self.downloadImageDetailsFromFlickr()
-        }
+    
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+                   photoCollection.performBatchUpdates({
+                   photoCollection.insertItems(at: [newIndexPath!])
+                   photoCollection.deleteItems(at: [indexPath!])
+               }, completion: { (finished: Bool) in
+                   if finished {
+                       self.photoCollection.reloadData()
+                   }
+               })
     }
     
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-           switch type {
-           case .delete: photoCollection.deleteItems(at: [indexPath!])
-           case .insert: photoCollection.insertItems(at: [indexPath!])
-           default:
-               break
-           }
-       }
+    
+//    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+//        photoCollection.performBatchUpdates({
+//            photoCollection.insertItems(at: [newIndexPath!])
+//            photoCollection.deleteItems(at: [indexPath!])
+//        }, completion: { (finished: Bool) in
+//            if finished {
+//                self.photoCollection.reloadData()
+//            }
+//        })
+//    }
 }

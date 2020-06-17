@@ -96,7 +96,7 @@
                                                     <rect key="frame" x="0.0" y="0.0" width="136" height="111"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
-                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="placeholder" translatesAutoresizingMaskIntoConstraints="NO" id="9VY-KA-LwD">
+                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="9VY-KA-LwD">
                                                             <rect key="frame" x="0.0" y="0.0" width="136" height="111"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="136" id="PkF-Nf-fJn"/>
@@ -153,21 +153,8 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="RSl-VP-ag0"/>
                     </view>
-                    <navigationItem key="navigationItem" id="cUO-FE-pP3">
-                        <barButtonItem key="rightBarButtonItem" style="plain" id="mjk-tx-VEH">
-                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="trailing" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="2QP-D3-8bJ">
-                                <rect key="frame" x="302" y="4" width="92" height="36"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <state key="normal" title="Clear All"/>
-                                <connections>
-                                    <action selector="deleteAllImages:" destination="nU5-Uc-sT4" eventType="touchUpInside" id="IXl-YN-i9y"/>
-                                </connections>
-                            </button>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" id="cUO-FE-pP3"/>
                     <connections>
-                        <outlet property="clearbutton" destination="2QP-D3-8bJ" id="hfH-ck-IgS"/>
                         <outlet property="flowLayout" destination="2DL-YA-DnG" id="RYh-pi-KLg"/>
                         <outlet property="imageLabel" destination="ewn-E1-M8X" id="F7a-C0-kT9"/>
                         <outlet property="mapView" destination="494-N2-Zq1" id="731-SB-IWT"/>
@@ -206,7 +193,4 @@
             <point key="canvasLocation" x="137.68115942028987" y="121.875"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="placeholder" width="1200" height="800"/>
-    </resources>
 </document>

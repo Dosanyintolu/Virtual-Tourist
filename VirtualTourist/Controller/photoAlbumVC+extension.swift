@@ -13,7 +13,7 @@ import MapKit
 extension photoAlbumViewController  {
     
     func downloadImageDetailsFromFlickr() {
-        flickrClient.getImageDetailsFromFlickr(lat: 36.83726811884947, lon: -83.94480415458935) { (photo, error) in
+        flickrClient.getImageDetailsFromFlickr(lat: latitude, lon: longitude) { (photo, error) in
             self.imageLoading(is: true)
             if error == nil {
                 for image in photo {
@@ -34,9 +34,13 @@ extension photoAlbumViewController  {
                 let flickrImage = FlickrImage(context: self.dataController.viewContext)
                 self.photoData.append(data!)
                 flickrImage.photo = data
-                try? self.dataController.viewContext.save()
+                flickrImage.url = flickrImageURL
+                do {
+                try self.dataController.viewContext.save()
+                } catch {
+                    print("Error saving into Core Data")
+                }
                 self.imageLoading(is: false)
-                print(flickrImage)
             } else {
                 print(error?.localizedDescription ?? "Something went wrong downloading an image")
                 }
@@ -66,11 +70,7 @@ extension photoAlbumViewController  {
       }
       
       func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-          let flickr = fetchResultController.fetchedObjects!
-          
-          if flickr.count == 0 {
-              imageLabel.isHidden = false
-          }
+         
           return fetchResultController.sections?[section].numberOfObjects ?? 0
       }
     
@@ -84,7 +84,7 @@ extension photoAlbumViewController  {
                    let image = self.fetchResultController.object(at: indexPath)
                    self.dataController.viewContext.delete(image)
                    try? self.dataController.viewContext.save()
-                   self.photoCollection.reloadData()
+                    self.photoCollection.deleteItems(at: [indexPath])
                }))
                present(alertVC, animated: true, completion: nil)
            }
@@ -93,15 +93,13 @@ extension photoAlbumViewController  {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath) as! collectionCell
            let image = fetchResultController.object(at: indexPath)
-           
-        if image.photo?.isEmpty ?? false {
-               self.imageLabel.isHidden = false
-           } else {
-           DispatchQueue.main.async {
-               cell.imageView.image = UIImage(data: image.photo!)
-               }
-            photoCollection.reloadData()
-       }
-           return cell
-       }
+        
+        if let cellImage = image.photo{
+            DispatchQueue.main.async {
+               cell.imageView.image = UIImage(data: cellImage)
+            }
+        }
+        return cell
+    }
+    
 }

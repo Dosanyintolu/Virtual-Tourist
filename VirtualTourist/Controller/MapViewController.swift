@@ -28,7 +28,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
         
         mapView.delegate = self
         let gestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(mapViewTapped(gestureRecognizer:)))
-        gestureRecognizer.numberOfTapsRequired = 1
         gestureRecognizer.delegate = self
         mapView.addGestureRecognizer(gestureRecognizer)
         setUpFetchedResultsViewController()
@@ -93,8 +92,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
         annotation.coordinate = coordinate
         locationStore.longitude = annotation.coordinate.longitude
         locationStore.latitude = annotation.coordinate.latitude
-        
-//        localStore.append(locationStore)
         mapView.addAnnotation(annotation)
         do {
             try dataController.viewContext.save()
