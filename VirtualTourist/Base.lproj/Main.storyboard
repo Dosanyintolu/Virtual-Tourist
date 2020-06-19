@@ -57,7 +57,7 @@
         <!--Photo Album View Controller-->
         <scene sceneID="USy-gC-Y3r">
             <objects>
-                <viewController modalPresentationStyle="fullScreen" id="nU5-Uc-sT4" customClass="photoAlbumViewController" customModule="VirtualTourist" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="PhotoAlbum" modalPresentationStyle="fullScreen" id="nU5-Uc-sT4" customClass="photoAlbumViewController" customModule="VirtualTourist" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="cRd-Yr-Tck">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

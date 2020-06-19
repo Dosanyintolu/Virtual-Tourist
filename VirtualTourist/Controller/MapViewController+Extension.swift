@@ -36,17 +36,16 @@ extension MapViewController {
                pinView!.annotation = annotation
            }
            return pinView
-           
        }
        
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-           performSegue(withIdentifier: "toPhotos", sender: nil)
-        var selectedAnnotation: MKPointAnnotation!
-        selectedAnnotation = view.annotation as? MKPointAnnotation
-        latitude = selectedAnnotation.coordinate.latitude
-        longitude = selectedAnnotation.coordinate.longitude
-        print("location is \(latitude), \(longitude)")
+       var selectedAnnotation: MKPointAnnotation!
+       selectedAnnotation = view.annotation as? MKPointAnnotation
+       latitude = selectedAnnotation.coordinate.latitude
+       longitude = selectedAnnotation.coordinate.longitude
+       performSegue(withIdentifier: "toPhotos", sender: self)
+
     }
-    
+
     
 }

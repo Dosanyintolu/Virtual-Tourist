@@ -18,6 +18,7 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     var photoData: [Data] = []
     var latitude: Double = 0
     var longitude: Double = 0
+    var location: Location!
     
     @IBOutlet weak var newCollectionButton: UIButton!
     @IBOutlet weak var mapView: MKMapView!
@@ -31,12 +32,13 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         photoCollection.delegate = self
         photoCollection.dataSource = self
         collectionViewFlowLayout()
+        setUpFetchedResultsViewController()
+        imageLabel.isHidden = true
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setUpMapView()
-        imageLabel.isHidden = true
         setUpFetchedResultsViewController()
         downloadImageDetailsFromFlickr()
     }
@@ -50,7 +52,7 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         mapView.delegate = self
         print("the location is: \(latitude) \(longitude)")
         let annotation = MKPointAnnotation()
-        let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        let coordinate = CLLocationCoordinate2D(latitude:latitude, longitude: longitude)
         let span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
         let region = MKCoordinateRegion(center: coordinate, span: span)
         annotation.coordinate = coordinate
@@ -69,6 +71,8 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     func setUpFetchedResultsViewController() {
            let fetchRequest: NSFetchRequest<FlickrImage> = FlickrImage.fetchRequest()
            let sortDescriptor = NSSortDescriptor(key: "photo", ascending: false)
+//        let predicate = NSPredicate(format: "latitude == %@", latitude)
+//           fetchRequest.predicate = predicate
            fetchRequest.sortDescriptors = [sortDescriptor]
         fetchResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: nil)
         
@@ -83,40 +87,15 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     
     @IBAction func fetchNewImages(_ sender: Any) {
     let imagesInFlickr = fetchResultController.fetchedObjects!
-    let imageContext = FlickrImage(context: dataController.viewContext)
-        if imageContext.photo?.count != 0 {
             for image in imagesInFlickr {
                 dataController.viewContext.delete(image)
                 try? dataController.viewContext.save()
             }
             downloadImageDetailsFromFlickr()
-        }
+            photoCollection.reloadData()    
     }
     
     func imageLoading(is downloading: Bool) {
-           newCollectionButton.isEnabled = !downloading
+           newCollectionButton.isEnabled = downloading
        }
-    
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-                   photoCollection.performBatchUpdates({
-                   photoCollection.insertItems(at: [newIndexPath!])
-                   photoCollection.deleteItems(at: [indexPath!])
-               }, completion: { (finished: Bool) in
-                   if finished {
-                       self.photoCollection.reloadData()
-                   }
-               })
-    }
-    
-    
-//    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-//        photoCollection.performBatchUpdates({
-//            photoCollection.insertItems(at: [newIndexPath!])
-//            photoCollection.deleteItems(at: [indexPath!])
-//        }, completion: { (finished: Bool) in
-//            if finished {
-//                self.photoCollection.reloadData()
-//            }
-//        })
-//    }
 }

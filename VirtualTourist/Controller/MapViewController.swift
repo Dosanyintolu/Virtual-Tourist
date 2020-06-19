@@ -20,6 +20,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     var dataController: DataController!
     var fetchResultController: NSFetchedResultsController<Location>!
     let locationDefaults =  UserDefaults.standard
+    var zoom = MKCoordinateSpan()
+    var location: Location!
    
     
     override func viewDidLoad() {
@@ -51,8 +53,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
     func mapViewInterfaceStore() {
         locationDefaults.set(mapView.centerCoordinate.latitude, forKey: "latitude")
         locationDefaults.set(mapView.centerCoordinate.longitude, forKey: "longitude")
-        locationDefaults.set(12.0, forKey: "latDelta")
-        locationDefaults.set(12.0, forKey: "lonDelta")
+        locationDefaults.set(10.0, forKey: "latDelta")
+        locationDefaults.set(10.0, forKey: "lonDelta")
     }
     
     func mapViewInterfaceSetUp() {
@@ -62,9 +64,11 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
         mapView.setRegion(region, animated: true)
     }
     
-    
     func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
         mapViewInterfaceStore()
+    }
+    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+         mapViewInterfaceStore()
     }
     
     func setUpFetchedResultsViewController() {
@@ -122,7 +126,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
             vc.dataController = dataController
             vc.longitude = longitude
             vc.latitude = latitude
+            vc.location = location
         }
-   }
+    }
 }
 
