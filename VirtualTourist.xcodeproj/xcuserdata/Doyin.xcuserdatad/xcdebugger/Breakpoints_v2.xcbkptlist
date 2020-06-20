@@ -3,4 +3,70 @@
    uuid = "1093798E-FD14-4ED8-A2CB-EB937222A62B"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8A5F893D-50B7-43D7-AF63-D83BF65C10EF"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VirtualTourist/Controller/photoAlbumVC+extension.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "17"
+            endingLineNumber = "17"
+            landmarkName = "downloadImageDetailsFromFlickr(completion:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "8A5F893D-50B7-43D7-AF63-D83BF65C10EF - 415082948eedd785"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "VirtualTourist.photoAlbumViewController.downloadImageDetailsFromFlickr(completion: (Swift.Bool, Swift.Optional&lt;Swift.Error&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "VirtualTourist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Doyin/Desktop/iOS/iOS2/VirtualTourist/VirtualTourist/Controller/photoAlbumVC+extension.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "17"
+                  endingLineNumber = "17"
+                  offsetFromSymbolStart = "156">
+               </Location>
+               <Location
+                  uuid = "8A5F893D-50B7-43D7-AF63-D83BF65C10EF - cb5f8e0059786522"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Array&lt;VirtualTourist.Photo&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in VirtualTourist.photoAlbumViewController.downloadImageDetailsFromFlickr(completion: (Swift.Bool, Swift.Optional&lt;Swift.Error&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "VirtualTourist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Doyin/Desktop/iOS/iOS2/VirtualTourist/VirtualTourist/Controller/photoAlbumVC+extension.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "18"
+                  endingLineNumber = "18"
+                  offsetFromSymbolStart = "252">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6DEAC694-2A31-42BD-9FBB-1C267D6462AC"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VirtualTourist/Controller/photoAlbumVC+extension.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "31"
+            endingLineNumber = "31"
+            landmarkName = "downloadImage()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

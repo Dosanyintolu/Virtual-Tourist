@@ -19,6 +19,7 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     var latitude: Double = 0
     var longitude: Double = 0
     var location: Location!
+    var flickr: FlickrImage!
     
     @IBOutlet weak var newCollectionButton: UIButton!
     @IBOutlet weak var mapView: MKMapView!
@@ -34,13 +35,15 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         collectionViewFlowLayout()
         setUpFetchedResultsViewController()
         imageLabel.isHidden = true
+        downloadImageDetailsFromFlickr(completion: handleResponse(success:error:))
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setUpMapView()
         setUpFetchedResultsViewController()
-        downloadImageDetailsFromFlickr()
+        
+        
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -48,9 +51,16 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         fetchResultController = nil
     }
     
+    func handleResponse(success: Bool, error: Error?) {
+        if success {
+            self.downloadImage()
+        } else {
+            print(error!)
+        }
+    }
+    
     func setUpMapView() {
         mapView.delegate = self
-        print("the location is: \(latitude) \(longitude)")
         let annotation = MKPointAnnotation()
         let coordinate = CLLocationCoordinate2D(latitude:latitude, longitude: longitude)
         let span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
@@ -91,11 +101,12 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
                 dataController.viewContext.delete(image)
                 try? dataController.viewContext.save()
             }
-            downloadImageDetailsFromFlickr()
+            downloadImageDetailsFromFlickr(completion: handleResponse(success:error:))
+            try? fetchResultController.performFetch()
             photoCollection.reloadData()    
     }
     
     func imageLoading(is downloading: Bool) {
-           newCollectionButton.isEnabled = downloading
+           newCollectionButton.isEnabled = !downloading
        }
 }
