@@ -18,8 +18,8 @@ extension photoAlbumViewController  {
             if error == nil {
                 for image in photo {
                     self.photoStore.append(image.url_m)
-                    print("Something wrong here")
                 }
+                self.downloadImage()
             } else {
                 print(error?.localizedDescription ?? "Error in the fetch image block")
                 print("problem in downloading details.")

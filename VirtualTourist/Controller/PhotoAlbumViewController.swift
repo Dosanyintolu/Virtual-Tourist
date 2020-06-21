@@ -40,6 +40,7 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         super.viewWillAppear(animated)
         setUpMapView()
         setUpFetchedResultsViewController()
+        downloadImageDetailsFromFlickr()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
