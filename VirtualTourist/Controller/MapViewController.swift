@@ -118,7 +118,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         present(alert, animated: true, completion: nil)
-        
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

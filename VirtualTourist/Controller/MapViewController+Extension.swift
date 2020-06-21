@@ -43,9 +43,12 @@ extension MapViewController {
        selectedAnnotation = view.annotation as? MKPointAnnotation
        latitude = selectedAnnotation.coordinate.latitude
        longitude = selectedAnnotation.coordinate.longitude
+       let savedPins = fetchResultController.fetchedObjects! as [Location]
+        location = savedPins.filter({$0.latitude == view.annotation?.coordinate.latitude && $0.longitude == view.annotation?.coordinate.longitude}).first
        performSegue(withIdentifier: "toPhotos", sender: self)
-
+        
+        
+        
+        
     }
-
-    
 }

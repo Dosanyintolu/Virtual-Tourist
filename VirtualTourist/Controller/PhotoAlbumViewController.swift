@@ -19,7 +19,7 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     var latitude: Double = 0
     var longitude: Double = 0
     var location: Location!
-    var flickr: FlickrImage!
+    var flickr: [FlickrImage] = []
     
     @IBOutlet weak var newCollectionButton: UIButton!
     @IBOutlet weak var mapView: MKMapView!
@@ -33,32 +33,25 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         photoCollection.delegate = self
         photoCollection.dataSource = self
         collectionViewFlowLayout()
-        setUpFetchedResultsViewController()
         imageLabel.isHidden = true
-        downloadImageDetailsFromFlickr(completion: handleResponse(success:error:))
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setUpMapView()
         setUpFetchedResultsViewController()
-        
-        
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         fetchResultController = nil
+        photoStore = []
+        photoData = []
+        latitude = 0
+        longitude = 0
     }
     
-    func handleResponse(success: Bool, error: Error?) {
-        if success {
-            self.downloadImage()
-        } else {
-            print(error!)
-        }
-    }
-    
+    //works
     func setUpMapView() {
         mapView.delegate = self
         let annotation = MKPointAnnotation()
@@ -80,9 +73,9 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     
     func setUpFetchedResultsViewController() {
            let fetchRequest: NSFetchRequest<FlickrImage> = FlickrImage.fetchRequest()
-           let sortDescriptor = NSSortDescriptor(key: "photo", ascending: false)
-//        let predicate = NSPredicate(format: "latitude == %@", latitude)
-//           fetchRequest.predicate = predicate
+           let sortDescriptor = NSSortDescriptor(key: "photo", ascending: true)
+        let predicate = NSPredicate(format: "locations == %@", location)
+        fetchRequest.predicate = predicate
            fetchRequest.sortDescriptors = [sortDescriptor]
         fetchResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: nil)
         
@@ -93,7 +86,7 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
            } catch {
                print(error.localizedDescription)
            }
-       }
+    }
     
     @IBAction func fetchNewImages(_ sender: Any) {
     let imagesInFlickr = fetchResultController.fetchedObjects!
@@ -101,9 +94,9 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
                 dataController.viewContext.delete(image)
                 try? dataController.viewContext.save()
             }
-            downloadImageDetailsFromFlickr(completion: handleResponse(success:error:))
-            try? fetchResultController.performFetch()
-            photoCollection.reloadData()    
+            downloadImageDetailsFromFlickr()
+        try? fetchResultController.performFetch()
+        photoCollection.reloadData()
     }
     
     func imageLoading(is downloading: Bool) {

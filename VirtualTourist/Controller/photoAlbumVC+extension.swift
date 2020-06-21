@@ -12,46 +12,24 @@ import MapKit
 
 extension photoAlbumViewController  {
     
-    func downloadImageDetailsFromFlickr(completion: @escaping (Bool, Error?) -> Void) {
-        self.imageLoading(is: true)
+    func downloadImageDetailsFromFlickr() {
+//        self.imageLoading(is: true)
         flickrClient.getImageDetailsFromFlickr(lat: latitude, lon: longitude) { (photo, error) in
             if error == nil {
                 for image in photo {
                     self.photoStore.append(image.url_m)
-                    completion(true, nil)
+                    print("Something wrong here")
                 }
             } else {
                 print(error?.localizedDescription ?? "Error in the fetch image block")
                 print("problem in downloading details.")
-                completion(false, error)
             }
         }
     }
     
-    func downloadImage() {
-        for flickrImageURL in photoStore {
-            print("something")
-            flickrClient.getImage(imageUrl: flickrImageURL) { (data, error) in
-                self.imageLoading(is: false)
-            if error == nil {
-                let flickrImage = FlickrImage(context: self.dataController.viewContext)
-                self.photoData.append(data!)
-                flickrImage.photo = data
-                flickrImage.url = flickrImageURL
-                flickrImage.latitude = self.latitude
-                flickrImage.longitude = self.longitude
-                do {
-                try self.dataController.viewContext.save()
-                } catch {
-                    print("Error saving into Core Data")
-                }
-        
-            } else {
-                print(error?.localizedDescription ?? "Something went wrong downloading an image")
-            }
-        }
-    }
-}
+//    func downloadImage() {
+//           
+//}
 
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
           let annotation = MKPointAnnotation()
@@ -76,7 +54,7 @@ extension photoAlbumViewController  {
       
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
          
-        return fetchResultController.fetchedObjects!.count
+        return fetchResultController.sections?[section].numberOfObjects ?? 0
       }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -88,60 +66,60 @@ extension photoAlbumViewController  {
                alertVC.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (_) in
                    let image = self.fetchResultController.object(at: indexPath)
                    self.dataController.viewContext.delete(image)
-                self.photoCollection.deleteItems(at: [indexPath])
                 do {
                    try self.dataController.viewContext.save()
                     try self.fetchResultController.performFetch()
                 } catch {
                     print(error.localizedDescription)
                 }
-                self.photoCollection.reloadData()
+                     self.photoCollection.deleteItems(at: [indexPath])
+                     self.photoCollection.reloadData()
                }))
                present(alertVC, animated: true, completion: nil)
            }
        }
     
-    func checkingForImages(cell: collectionCell, at indexPath: IndexPath) -> UICollectionViewCell {
-        
-        let location = fetchResultController.fetchedObjects!
-        
-        
-        for location in location {
-            if location.locations?.latitude == self.latitude && location.photo != nil {
-                let image = fetchResultController.object(at: indexPath)
-                if let cellImage = image.photo {
-                DispatchQueue.main.async {
-                    cell.imageView.image = UIImage(data: cellImage)
-                }
-                    return cell
-            }
-        } else if location.locations?.latitude == self.latitude && location.photo == nil {
-                downloadImage()
-        let image = self.fetchResultController.object(at: indexPath)
-        if let cellImage = image.photo {
-            DispatchQueue.main.async {
-                cell.imageView.image = UIImage(data: cellImage)
-            }
-            return cell
-        } else {
-                self.imageLabel.isHidden = false
-            }
-    }
-        }
-        return cell
-    }
+  
        
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath) as! collectionCell
-        let image = fetchResultController.object(at: indexPath)
-        if let cellImage = image.photo {
-            DispatchQueue.main.async {
-                cell.imageView.image = UIImage(data: cellImage)
-            }
+           
+        if fetchResultController.fetchedObjects?.count == 0 {
+            for flickr in photoStore {
+                       flickrClient.getImage(imageUrl: flickr) { (data, error) in
+                       if error == nil {
+                           let flickrImage = FlickrImage(context: self.dataController.viewContext)
+                           flickrImage.photo = data
+                           flickrImage.url = flickr
+                        flickrImage.locations?.latitude = self.latitude
+                        flickrImage.locations?.longitude = self.longitude
+                        if let cellImage = data {
+                        DispatchQueue.main.async {
+                            cell.imageView.image = UIImage(data: cellImage)
+                            }
+                        }
+                           do {
+                           try self.dataController.viewContext.save()
+                               try self.fetchResultController.performFetch()
+                               self.photoCollection.reloadData()
+                           } catch {
+                               print("Error saving into Core Data")
+                           }
+                       } else {
+                           print(error?.localizedDescription ?? "Something went wrong downloading an image")
+                       }
+                   }
+               }
+        } else {
+            let image = fetchResultController.object(at: indexPath)
+                  if let cellImage = image.photo {
+                      DispatchQueue.main.async {
+                           cell.imageView.image = UIImage(data: cellImage)
+                      }
+                  }
         }
         return cell
     }
-         
-    }
+}
 
 
