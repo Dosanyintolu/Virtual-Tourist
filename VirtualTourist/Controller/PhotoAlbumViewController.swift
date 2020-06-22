@@ -93,6 +93,7 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
            for image in imagesInFlickr {
                dataController.viewContext.delete(image)
            }
+        try? fetchResultController.performFetch()
            downloadImageDetailsFromFlickr()
     }
     
