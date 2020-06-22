@@ -25,8 +25,8 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var photoCollection: UICollectionView!
     @IBOutlet weak var imageLabel: UILabel!
-    @IBOutlet weak var clearbutton: UIButton!
-    @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!    
+    @IBOutlet weak var newImageButton: UIButton!
+    @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,7 +40,6 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         super.viewWillAppear(animated)
         setUpMapView()
         setUpFetchedResultsViewController()
-        downloadImageDetailsFromFlickr()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -52,7 +51,6 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         longitude = 0
     }
     
-    //works
     func setUpMapView() {
         mapView.delegate = self
         let annotation = MKPointAnnotation()
@@ -80,27 +78,34 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
            fetchRequest.sortDescriptors = [sortDescriptor]
         fetchResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: nil)
         
-           
            fetchResultController.delegate = self
            do {
                try fetchResultController.performFetch()
            } catch {
                print(error.localizedDescription)
            }
+        checkForImages()
     }
     
     @IBAction func fetchNewImages(_ sender: Any) {
+    try? fetchResultController.performFetch()
     let imagesInFlickr = fetchResultController.fetchedObjects!
-            for image in imagesInFlickr {
-                dataController.viewContext.delete(image)
-                try? dataController.viewContext.save()
-            }
-            downloadImageDetailsFromFlickr()
-        try? fetchResultController.performFetch()
-        photoCollection.reloadData()
+           for image in imagesInFlickr {
+               dataController.viewContext.delete(image)
+           }
+           downloadImageDetailsFromFlickr()
     }
+    
     
     func imageLoading(is downloading: Bool) {
            newCollectionButton.isEnabled = !downloading
        }
+    
+    func checkForImages() {
+     if fetchResultController.fetchedObjects!.count == 0 {
+        downloadImageDetailsFromFlickr()
+        try? fetchResultController.performFetch()
+        photoCollection.reloadData()
+        }
+    }
 }

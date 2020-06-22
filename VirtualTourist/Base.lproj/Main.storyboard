@@ -134,7 +134,7 @@
                                             <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                             <state key="normal" title="New Collection"/>
                                             <connections>
-                                                <action selector="fetchNewImages:" destination="nU5-Uc-sT4" eventType="touchUpInside" id="v4V-Le-ibh"/>
+                                                <action selector="fetchNewImages:" destination="nU5-Uc-sT4" eventType="touchUpInside" id="BkO-3p-ggu"/>
                                             </connections>
                                         </button>
                                     </barButtonItem>
@@ -159,6 +159,7 @@
                         <outlet property="imageLabel" destination="ewn-E1-M8X" id="F7a-C0-kT9"/>
                         <outlet property="mapView" destination="494-N2-Zq1" id="731-SB-IWT"/>
                         <outlet property="newCollectionButton" destination="Kuq-s9-P6S" id="g4J-hS-YYl"/>
+                        <outlet property="newImageButton" destination="Kuq-s9-P6S" id="Qvr-0a-LDD"/>
                         <outlet property="photoCollection" destination="bzP-2R-FJi" id="iV3-xy-sKf"/>
                     </connections>
                 </viewController>

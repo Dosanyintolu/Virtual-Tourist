@@ -13,7 +13,7 @@ import MapKit
 extension photoAlbumViewController  {
     
     func downloadImageDetailsFromFlickr() {
-//        self.imageLoading(is: true)
+        self.imageLoading(is: true)
         flickrClient.getImageDetailsFromFlickr(lat: latitude, lon: longitude) { (photo, error) in
             if error == nil {
                 for image in photo {
@@ -28,25 +28,27 @@ extension photoAlbumViewController  {
     }
     
     func downloadImage() {
-    for flickr in photoStore {
-                         flickrClient.getImage(imageUrl: flickr) { (data, error) in
-                         if error == nil {
-                             let flickrImage = FlickrImage(context: self.dataController.viewContext)
-                             flickrImage.photo = data
-                             flickrImage.url = flickr
-                          flickrImage.locations?.latitude = self.latitude
-                          flickrImage.locations?.longitude = self.longitude
-                             do {
-                             try self.dataController.viewContext.save()
-                                 try self.fetchResultController.performFetch()
-                                 self.photoCollection.reloadData()
-                             } catch {
-                                 print("Error saving into Core Data")
-                             }
-                         } else {
-                             print(error?.localizedDescription ?? "Something went wrong downloading an image")
-                         }
-                     }
+        for flickr in photoStore {
+            flickrClient.getImage(imageUrl: flickr) { (data, error) in
+                if error == nil {
+                self.imageLoading(is: false)
+                let flickrImage = FlickrImage(context: self.dataController.viewContext)
+                flickrImage.photo = data
+                flickrImage.url = flickr
+                flickrImage.locations = self.location
+                flickrImage.locations?.latitude = self.latitude
+                flickrImage.locations?.longitude = self.longitude
+                    do {
+                        try self.dataController.viewContext.save()
+                        try self.fetchResultController.performFetch()
+                        self.photoCollection.reloadData()
+                       } catch {
+                        print("Error saving into Core Data")
+                       }
+                } else {
+                        print(error?.localizedDescription ?? "Something went wrong downloading an image")
+                        }
+            }
         }
     }
 
@@ -102,15 +104,20 @@ extension photoAlbumViewController  {
        
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath) as! collectionCell
-           
+        try? fetchResultController.performFetch()
             let image = fetchResultController.object(at: indexPath)
+        
+        if image.photo == nil {
+            imageLabel.isEnabled = true
+        } else  {
                   if let cellImage = image.photo {
                       DispatchQueue.main.async {
                            cell.imageView.image = UIImage(data: cellImage)
                       }
-                  }
-          return cell
+              }
         }
+        return cell
     }
+}
 
 

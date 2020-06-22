@@ -102,6 +102,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIGestureRecognize
         }catch {
             print(error)
         }
+        try? fetchResultController.performFetch()
     }
 }
     @IBAction func clearAnnotations(_ sender: Any) {
