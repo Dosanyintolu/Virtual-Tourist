@@ -34,12 +34,14 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         photoCollection.dataSource = self
         collectionViewFlowLayout()
         imageLabel.isHidden = true
+        newImageButton.addTarget(self, action: #selector(deleteItems), for: .touchUpInside)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setUpMapView()
         setUpFetchedResultsViewController()
+        downloadImageDetailsFromFlickr()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -54,6 +56,7 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     func setUpMapView() {
         mapView.delegate = self
         let annotation = MKPointAnnotation()
+        print(longitude, latitude)
         let coordinate = CLLocationCoordinate2D(latitude:latitude, longitude: longitude)
         let span = MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
         let region = MKCoordinateRegion(center: coordinate, span: span)
@@ -88,13 +91,19 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     }
     
     @IBAction func fetchNewImages(_ sender: Any) {
-    try? fetchResultController.performFetch()
-    let imagesInFlickr = fetchResultController.fetchedObjects!
+    
+    }
+    
+    @objc func deleteItems() {
+        let imagesInFlickr = fetchResultController.fetchedObjects!
+        let indexPath = IndexPath(row: 0, section: 0)
            for image in imagesInFlickr {
-               dataController.viewContext.delete(image)
+            dataController.viewContext.delete(image)
+            photoCollection.deleteItems(at: [indexPath])
+            try? dataController.viewContext.save()
            }
-        try? fetchResultController.performFetch()
            downloadImageDetailsFromFlickr()
+           self.photoCollection.reloadData()
     }
     
     

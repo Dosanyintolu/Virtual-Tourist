@@ -40,8 +40,7 @@ extension photoAlbumViewController  {
                 flickrImage.locations?.longitude = self.longitude
                     do {
                         try self.dataController.viewContext.save()
-                        try self.fetchResultController.performFetch()
-                        self.photoCollection.reloadData()
+                        try? self.fetchResultController.performFetch()
                        } catch {
                         print("Error saving into Core Data")
                        }
@@ -104,11 +103,9 @@ extension photoAlbumViewController  {
        
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath) as! collectionCell
-        try? fetchResultController.performFetch()
             let image = fetchResultController.object(at: indexPath)
-        
-        if image.photo == nil {
-            imageLabel.isEnabled = true
+        if image.photo?.count == 0 {
+            imageLabel.isHidden = false
         } else  {
                   if let cellImage = image.photo {
                       DispatchQueue.main.async {

@@ -133,9 +133,6 @@
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                             <state key="normal" title="New Collection"/>
-                                            <connections>
-                                                <action selector="fetchNewImages:" destination="nU5-Uc-sT4" eventType="touchUpInside" id="BkO-3p-ggu"/>
-                                            </connections>
                                         </button>
                                     </barButtonItem>
                                 </items>
