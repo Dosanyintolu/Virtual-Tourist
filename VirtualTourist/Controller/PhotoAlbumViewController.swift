@@ -19,7 +19,6 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     var latitude: Double = 0
     var longitude: Double = 0
     var location: Location!
-    var flickr: [FlickrImage] = []
     
     @IBOutlet weak var newCollectionButton: UIButton!
     @IBOutlet weak var mapView: MKMapView!
@@ -34,14 +33,13 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         photoCollection.dataSource = self
         collectionViewFlowLayout()
         imageLabel.isHidden = true
-        newImageButton.addTarget(self, action: #selector(deleteItems), for: .touchUpInside)
+        newImageButton.addTarget(self, action: #selector(fetchNewItems), for: .touchUpInside)
+        setUpFetchedResultsViewController(completion: handleFetchedResultController(success:error:))
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setUpMapView()
-        setUpFetchedResultsViewController()
-        downloadImageDetailsFromFlickr()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -73,7 +71,7 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         flowLayout.itemSize = CGSize(width: dimension, height: dimension)
     }
     
-    func setUpFetchedResultsViewController() {
+    func setUpFetchedResultsViewController(completion: @escaping (Bool, Error?) -> Void) {
            let fetchRequest: NSFetchRequest<FlickrImage> = FlickrImage.fetchRequest()
            let sortDescriptor = NSSortDescriptor(key: "photo", ascending: true)
         let predicate = NSPredicate(format: "locations == %@", location)
@@ -84,27 +82,58 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
            fetchResultController.delegate = self
            do {
                try fetchResultController.performFetch()
+                completion(true, nil)
            } catch {
                print(error.localizedDescription)
+                completion(false, error)
            }
-        checkForImages()
     }
     
-    @IBAction func fetchNewImages(_ sender: Any) {
-    
+    func handleFetchedResultController(success:Bool, error: Error?) {
+        if success{
+            self.checkForImages()
+        } else {
+            print(error?.localizedDescription ?? "")
+        }
     }
     
-    @objc func deleteItems() {
+    
+    func handleDownload(success:Bool, error: Error?) {
+        if success {
+            downloadImage(completion: handleDownloadedImages(success:error:))
+        } else {
+            print(error?.localizedDescription ?? "Error in handling downloaded details")
+        }
+    }
+    
+    func handleDownloadedImages(success: Bool, error: Error?) {
+        if success {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            try? self.fetchResultController.performFetch()
+            self.photoCollection.reloadData()
+            }
+        } else {
+            print(error?.localizedDescription ?? "Error in handling downloaded Images")
+        }
+    }
+    
+    @objc func fetchNewItems() {
         let imagesInFlickr = fetchResultController.fetchedObjects!
         let indexPath = IndexPath(row: 0, section: 0)
            for image in imagesInFlickr {
             dataController.viewContext.delete(image)
-            photoCollection.deleteItems(at: [indexPath])
-            try? dataController.viewContext.save()
-           }
-           downloadImageDetailsFromFlickr()
-           self.photoCollection.reloadData()
-    }
+            self.photoCollection.deleteItems(at: [indexPath])
+            DispatchQueue.main.async {
+                self.photoCollection.reloadData()
+            }
+        }
+        downloadImageDetailsFromFlickr(completion: handleDownload(success:error:))
+        DispatchQueue.main.asyncAfter(deadline:.now() + 0.5) {
+            try? self.fetchResultController.performFetch()
+            self.photoCollection.reloadData()
+        }
+        try? dataController.viewContext.save()
+}
     
     
     func imageLoading(is downloading: Bool) {
@@ -112,10 +141,8 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
        }
     
     func checkForImages() {
-     if fetchResultController.fetchedObjects!.count == 0 {
-        downloadImageDetailsFromFlickr()
-        try? fetchResultController.performFetch()
-        photoCollection.reloadData()
+       if fetchResultController.fetchedObjects!.count == 0 {
+                downloadImageDetailsFromFlickr(completion: handleDownload(success:error:))
+            }
         }
-    }
 }

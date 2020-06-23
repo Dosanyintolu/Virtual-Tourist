@@ -12,22 +12,30 @@ import MapKit
 
 extension photoAlbumViewController  {
     
-    func downloadImageDetailsFromFlickr() {
+    func downloadImageDetailsFromFlickr(completion: @escaping (Bool, Error?) -> Void) {
         self.imageLoading(is: true)
         flickrClient.getImageDetailsFromFlickr(lat: latitude, lon: longitude) { (photo, error) in
             if error == nil {
                 for image in photo {
-                    self.photoStore.append(image.url_m)
+                    if image.url_m == "" {
+                    DispatchQueue.main.async {
+                        self.imageLabel.isHidden = false
+                        completion(false, nil)
+            }
+                    } else {
+                      self.photoStore.append(image.url_m)
+                    }
+                    completion(true, nil)
                 }
-                self.downloadImage()
             } else {
                 print(error?.localizedDescription ?? "Error in the fetch image block")
                 print("problem in downloading details.")
+                completion(false, error)
             }
         }
     }
     
-    func downloadImage() {
+    func downloadImage(completion: @escaping(Bool, Error?) -> Void ) {
         for flickr in photoStore {
             flickrClient.getImage(imageUrl: flickr) { (data, error) in
                 if error == nil {
@@ -40,16 +48,17 @@ extension photoAlbumViewController  {
                 flickrImage.locations?.longitude = self.longitude
                     do {
                         try self.dataController.viewContext.save()
-                        try? self.fetchResultController.performFetch()
+                        completion(true, nil)
                        } catch {
                         print("Error saving into Core Data")
+                        completion(false, error)
                        }
                 } else {
                         print(error?.localizedDescription ?? "Something went wrong downloading an image")
-                        }
+                    }
             }
         }
-    }
+}
 
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
           let annotation = MKPointAnnotation()
@@ -92,8 +101,10 @@ extension photoAlbumViewController  {
                 } catch {
                     print(error.localizedDescription)
                 }
-                     self.photoCollection.deleteItems(at: [indexPath])
-                     self.photoCollection.reloadData()
+                DispatchQueue.main.async {
+                    self.photoCollection.deleteItems(at: [indexPath])
+                    self.photoCollection.reloadData()
+                }
                }))
                present(alertVC, animated: true, completion: nil)
            }
@@ -104,14 +115,10 @@ extension photoAlbumViewController  {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath) as! collectionCell
             let image = fetchResultController.object(at: indexPath)
-        if image.photo?.count == 0 {
-            imageLabel.isHidden = false
-        } else  {
-                  if let cellImage = image.photo {
+                if let cellImage = image.photo {
                       DispatchQueue.main.async {
                            cell.imageView.image = UIImage(data: cellImage)
                       }
-              }
         }
         return cell
     }
