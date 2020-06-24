@@ -15,7 +15,6 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     var dataController: DataController!
     var fetchResultController: NSFetchedResultsController<FlickrImage>!
     var photoStore: [String] = []
-    var photoData: [Data] = []
     var latitude: Double = 0
     var longitude: Double = 0
     var location: Location!
@@ -45,10 +44,6 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         fetchResultController = nil
-        photoStore = []
-        photoData = []
-        latitude = 0
-        longitude = 0
     }
     
     func setUpMapView() {
@@ -89,51 +84,9 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
            }
     }
     
-    func handleFetchedResultController(success:Bool, error: Error?) {
-        if success{
-            self.checkForImages()
-        } else {
-            print(error?.localizedDescription ?? "")
-        }
-    }
-    
-    
-    func handleDownload(success:Bool, error: Error?) {
-        if success {
-            downloadImage(completion: handleDownloadedImages(success:error:))
-        } else {
-            print(error?.localizedDescription ?? "Error in handling downloaded details")
-        }
-    }
-    
-    func handleDownloadedImages(success: Bool, error: Error?) {
-        if success {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            try? self.fetchResultController.performFetch()
-            self.photoCollection.reloadData()
-            }
-        } else {
-            print(error?.localizedDescription ?? "Error in handling downloaded Images")
-        }
-    }
-    
     @objc func fetchNewItems() {
-        let imagesInFlickr = fetchResultController.fetchedObjects!
-        let indexPath = IndexPath(row: 0, section: 0)
-           for image in imagesInFlickr {
-            dataController.viewContext.delete(image)
-            self.photoCollection.deleteItems(at: [indexPath])
-            DispatchQueue.main.async {
-                self.photoCollection.reloadData()
-            }
-        }
-        downloadImageDetailsFromFlickr(completion: handleDownload(success:error:))
-        DispatchQueue.main.asyncAfter(deadline:.now() + 0.5) {
-            try? self.fetchResultController.performFetch()
-            self.photoCollection.reloadData()
-        }
-        try? dataController.viewContext.save()
-}
+        fetchFunc(completion: handleFetchFunc(success:error:))
+    }
     
     
     func imageLoading(is downloading: Bool) {
@@ -145,4 +98,55 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
                 downloadImageDetailsFromFlickr(completion: handleDownload(success:error:))
             }
         }
+    
+    func fetchFunc(completion: @escaping (Bool, Error?) -> Void) {
+        let imagesInFlickr = fetchResultController.fetchedObjects!
+        let indexPath = IndexPath(row: 0, section: 0)
+           for image in imagesInFlickr {
+            dataController.viewContext.delete(image)
+            DispatchQueue.main.async {
+                self.photoCollection.deleteItems(at: [indexPath])
+            }
+        }
+        completion(true, nil)
+    }
+    
+    func handleFetchFunc(success: Bool, error: Error?) {
+        if success {
+            downloadImageDetailsFromFlickr(completion: handleDownload(success:error:))
+            DispatchQueue.main.async {
+                self.photoCollection.reloadData()
+            }
+            try? self.dataController.viewContext.save()
+        } else {
+                print(error?.localizedDescription ?? "Problem in fetching")
+            }
+        }
+    
+    func handleFetchedResultController(success:Bool, error: Error?) {
+        if success{
+            self.checkForImages()
+        } else {
+            print(error?.localizedDescription ?? "")
+        }
+    }
+
+    func handleDownload(success:Bool, error: Error?) {
+        if success {
+            downloadImage(completion: handleDownloadedImages(success:error:))
+        } else {
+            print(error?.localizedDescription ?? "Error in handling downloaded details")
+        }
+    }
+    
+    func handleDownloadedImages(success: Bool, error: Error?) {
+        if success {
+            try? self.fetchResultController.performFetch()
+            DispatchQueue.main.async {
+            self.photoCollection.reloadData()
+            }
+        } else {
+            print(error?.localizedDescription ?? "Error in handling downloaded Images")
+        }
+    }
 }

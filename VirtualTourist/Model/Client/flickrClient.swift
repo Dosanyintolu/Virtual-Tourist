@@ -16,10 +16,9 @@ class flickrClient {
     static let secretKey = "62d9773207c04617"
     
     enum Endpoint{
-       static let randomNumber = Int.random(in: 0..<3000)
        static let flickrbaseURL = "https://www.flickr.com/services/rest/?method=flickr.photos.search&"
        static let flickrApiKey = "api_key=\(flickrClient.apiKey)"
-       static let flickrPoint = "&media=Photo&per_page=2&extras=url_m&format=json"
+       static let flickrPoint = "&media=Photo&per_page=3&extras=url_m&format=json"
        
         
         
@@ -29,7 +28,7 @@ class flickrClient {
         var stringValue: String{
             switch self {
             case .flickrSearchImageURL(let lat,let lon):
-                return Endpoint.flickrbaseURL + Endpoint.flickrApiKey + "&lat=\(lat)&lon=\(lon)" + "&page=\(Endpoint.randomNumber)" + Endpoint.flickrPoint
+                return Endpoint.flickrbaseURL + Endpoint.flickrApiKey + "&lat=\(lat)&lon=\(lon)" + "&page=\(Int.random(in: 0..<3000))" + Endpoint.flickrPoint
             }
         }
         
@@ -40,6 +39,7 @@ class flickrClient {
     
     class func getImageDetailsFromFlickr(lat: Double, lon: Double, completion: @escaping ([Photo], Error?) -> Void ) {
         taskGETRequest(url: Endpoint.flickrSearchImageURL(lat,lon).url, response: photoClass.self) { (response, error) in
+            print(Endpoint.flickrSearchImageURL(lat,lon).url)
             if let response = response {
                 completion(response.photos.photo, nil)
             } else {

@@ -17,15 +17,15 @@ extension photoAlbumViewController  {
         flickrClient.getImageDetailsFromFlickr(lat: latitude, lon: longitude) { (photo, error) in
             if error == nil {
                 for image in photo {
-                    if image.url_m == "" {
-                    DispatchQueue.main.async {
+                    if image.url_m.count == 0 {
                         self.imageLabel.isHidden = false
+                        self.imageLoading(is: false)
                         completion(false, nil)
-            }
                     } else {
                       self.photoStore.append(image.url_m)
+                        print(self.photoStore)
+                        completion(true, nil)
                     }
-                    completion(true, nil)
                 }
             } else {
                 print(error?.localizedDescription ?? "Error in the fetch image block")
@@ -48,6 +48,7 @@ extension photoAlbumViewController  {
                 flickrImage.locations?.longitude = self.longitude
                     do {
                         try self.dataController.viewContext.save()
+                        self.photoStore.removeAll()
                         completion(true, nil)
                        } catch {
                         print("Error saving into Core Data")
