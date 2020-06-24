@@ -33,12 +33,13 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         collectionViewFlowLayout()
         imageLabel.isHidden = true
         newImageButton.addTarget(self, action: #selector(fetchNewItems), for: .touchUpInside)
-        setUpFetchedResultsViewController(completion: handleFetchedResultController(success:error:))
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setUpMapView()
+        setUpFetchedResultsViewController(completion: handleFetchedResultController(success:error:))
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -100,24 +101,25 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         }
     
     func fetchFunc(completion: @escaping (Bool, Error?) -> Void) {
+        self.photoStore = []
         let imagesInFlickr = fetchResultController.fetchedObjects!
         let indexPath = IndexPath(row: 0, section: 0)
            for image in imagesInFlickr {
             dataController.viewContext.delete(image)
-            DispatchQueue.main.async {
-                self.photoCollection.deleteItems(at: [indexPath])
-            }
+            self.photoCollection.deleteItems(at: [indexPath])
         }
+        try? dataController.viewContext.save()
         completion(true, nil)
     }
     
     func handleFetchFunc(success: Bool, error: Error?) {
         if success {
             downloadImageDetailsFromFlickr(completion: handleDownload(success:error:))
+            try? self.dataController.viewContext.save()
             DispatchQueue.main.async {
                 self.photoCollection.reloadData()
             }
-            try? self.dataController.viewContext.save()
+            
         } else {
                 print(error?.localizedDescription ?? "Problem in fetching")
             }
