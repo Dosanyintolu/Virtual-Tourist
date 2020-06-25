@@ -19,9 +19,6 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     var longitude: Double = 0
     var location: Location!
     var photoUrl:String?
-    var photoLocation:String?
-    
-    var flickrImage: [Data] = []
     
     @IBOutlet weak var newCollectionButton: UIButton!
     @IBOutlet weak var mapView: MKMapView!
