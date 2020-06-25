@@ -18,6 +18,10 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     var latitude: Double = 0
     var longitude: Double = 0
     var location: Location!
+    var photoUrl:String?
+    var photoLocation:String?
+    
+    var flickrImage: [Data] = []
     
     @IBOutlet weak var newCollectionButton: UIButton!
     @IBOutlet weak var mapView: MKMapView!
@@ -101,7 +105,6 @@ class photoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         }
     
     func fetchFunc(completion: @escaping (Bool, Error?) -> Void) {
-        self.photoStore = []
         let imagesInFlickr = fetchResultController.fetchedObjects!
         let indexPath = IndexPath(row: 0, section: 0)
            for image in imagesInFlickr {
